@@ -76,6 +76,15 @@ docs/idea/
 - [ ] 適切なリスク評価の実施
 - [ ] 更新・継続監視の計画
 
+## テンプレート・使用例
+
+### アウトプットテンプレート
+- [調査結果アウトプットテンプレート](../templates/research-output-template.md)
+- [分析結果アウトプットテンプレート](../templates/analysis-output-template.md)
+
+### 使用例
+- [技術調査例：Next.js vs Nuxt.js](example_tech_20240621_nextjs_vs_nuxtjs.md)
+
 ## 参考リンク
 
 - [調査プロセス](../workflow/research-process.md)
