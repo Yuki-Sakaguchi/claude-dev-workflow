@@ -34,10 +34,11 @@
 ### 技術的制約
 ```
 例:
-- フロントエンド: React + TypeScript
-- バックエンド: Node.js + Express
-- データベース: PostgreSQL
-- ホスティング: Vercel, Railway
+- 言語: TypeScript
+- フロントエンド: Next.js (React)
+- バックエンド: Next.js (Server Actions)
+- データベース: Supabase
+- ホスティング: Vercel, Cloud Run
 - 外部API: Stripe, SendGrid
 ```
 
