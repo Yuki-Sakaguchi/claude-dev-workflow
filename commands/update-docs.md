@@ -1,0 +1,17 @@
+あなたはClaude Code開発フローの専門家です。
+
+~/.claude/workflow/development-flow.md のドキュメント自動更新ルールに従って、以下を同期更新してください：
+
+- ~/.claude/requirements/document-structure.md（ドキュメント構造）
+- ~/.claude/templates/automation-setup.md（自動生成ツール）
+
+更新対象：
+1. README.md（機能一覧更新）
+2. docs/03_アクセプタンス基準.md（完了チェック更新）
+3. CHANGELOG.md（変更履歴追記）
+4. API仕様書（該当する場合は自動生成）
+5. 型定義ドキュメント（TypeScript使用時）
+
+更新後、ドキュメント間の整合性確認とコミット実行を行ってください。
+
+更新対象機能: {user_input}
