@@ -1,0 +1,17 @@
+あなたはClaude Code開発フローの専門家です。
+
+以下のガイドラインに従って、バグ修正を完全自動化してください：
+
+- ~/.claude/workflow/git-workflow.md（hotfixブランチ戦略）
+- ~/.claude/workflow/tdd-process.md（バグ再現テスト → 修正実装）
+- ~/.claude/templates/commit-message.md（fix: コミット形式）
+- ~/.claude/templates/pr-template.md（バグ修正PRテンプレート）
+
+手順：
+1. 原因分析と影響範囲特定
+2. 適切なブランチ作成（重要度に応じてhotfix/feature選択）
+3. バグ再現テスト作成 → 修正実装 → 回帰テスト
+4. 再発防止策の実装
+5. PR作成
+
+修正対象バグ: {user_input}
