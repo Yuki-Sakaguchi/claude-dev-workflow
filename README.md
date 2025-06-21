@@ -48,7 +48,48 @@ Claude Codeに以下を指示して動作確認：
 ~/.claude/CLAUDE.md の内容を確認してください
 ```
 
-## 使用方法
+## 🚀 クイックスタート（初回セットアップ）
+
+### Step 1: 最初のプロジェクト作成
+```bash
+/start-project [プロジェクト名]
+```
+30分で要件定義〜GitHub Issue作成まで完了
+
+### Step 2: 開発開始
+```bash
+/implement issue #1
+```
+1つのコマンドで実装〜テスト〜PR作成まで自動実行
+
+### Step 3: 品質チェック
+```bash
+/auto-review [ブランチ名]
+```
+プロレベルの自動コードレビューで品質確保
+
+**これだけで個人開発が3-5倍効率化されます！**
+
+## 📋 日常的な使い方
+
+### 朝の作業開始
+```bash
+/implement issue #15    # 今日のタスクを1コマンドで実装
+```
+
+### 作業完了時
+```bash
+/auto-review feature/issue-15-payment   # 自動品質チェック
+```
+
+### 調査・分析が必要な時
+```bash
+/tech-research Next.js vs Nuxt.js    # 技術比較調査
+/competitor-analysis Notion          # 競合分析
+/analyze-codebase                     # コードベース分析
+```
+
+## 使用方法（詳細）
 
 ### 完全自動化開発フロー
 
@@ -117,28 +158,34 @@ Claude Codeに以下を指示して動作確認：
 - 原因分析→修正→テスト→PR作成
 - 再発防止策の実装
 
-## 日常的な使用パターン
-
-### 朝の作業開始時
-```bash
-/implement issue #15    # 今日のタスク実装
+#### 9. 調査・分析（必要時）
 ```
-
-### 実装完了時
-```bash
-/review-ready feature/issue-15-payment  # 品質チェック
-/auto-review feature/issue-15-payment   # 自動レビュー
+/research PWAの導入可能性
+/tech-research Docker vs Podman
+/competitor-analysis タスク管理アプリ
+/analyze-codebase パフォーマンス改善
 ```
+- 体系的な情報収集・分析
+- 構造化されたレポート作成
+- `docs/idea/` に結果保存
 
-### バグ報告を受けた時
-```bash
-/fix-bug ユーザー登録時の入力バリデーションエラー
-```
+## 利用可能なコマンド一覧
 
-### 新機能リリース時
-```bash
-/update-docs 決済機能
-```
+### 🚀 開発フロー
+- `/start-project` - プロジェクト開始・要件定義
+- `/setup-automation` - 環境構築・自動化設定
+- `/create-issues` - GitHub Issue作成
+- `/implement` - 機能実装（TDD自動実行）
+- `/fix-bug` - バグ修正
+- `/review-ready` - リリース前品質チェック
+- `/auto-review` - 自動コードレビュー
+- `/update-docs` - ドキュメント更新
+
+### 🔍 調査・分析
+- `/research` - 一般調査（市場・技術・可能性調査）
+- `/tech-research` - 技術比較調査
+- `/competitor-analysis` - 競合分析
+- `/analyze-codebase` - コードベース分析
 
 ## 効果測定
 
