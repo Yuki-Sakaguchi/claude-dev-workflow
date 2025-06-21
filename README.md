@@ -206,6 +206,18 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 - 構造化されたレポート作成
 - `docs/idea/` に結果保存
 
+#### 10. PRレビュー対応（必要時）
+```
+/pr-review 123                              # 基本使用
+/pr-review 123 --priority critical          # 緊急対応のみ
+/pr-review 123 --focus security             # セキュリティ特化
+/pr-review 123 --auto-fix false             # 計画のみ作成
+```
+- レビューコメント自動取得・分析
+- 重要度別分類（Critical/Important/Minor）
+- 段階的修正実行・品質チェック
+- 修正完了レポート自動生成
+
 ## 利用可能なコマンド一覧
 
 ### 🚀 開発フロー
@@ -223,6 +235,9 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 - `/tech-research` - 技術比較調査
 - `/competitor-analysis` - 競合分析
 - `/analyze-codebase` - コードベース分析
+
+### 🔧 PRレビュー対応
+- `/pr-review` - PRレビューコメント自動対応（取得・分析・修正実行）
 
 ## 効果測定
 

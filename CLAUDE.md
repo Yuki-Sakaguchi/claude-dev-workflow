@@ -309,6 +309,7 @@ templates/automation-setup.mdに従って、自動化ツールを設定してく
 - **`/analyze-codebase`** - コードベース分析（品質・パフォーマンス・セキュリティ）
 - **`/competitor-analysis`** - 競合分析（機能・戦略・市場ポジション）
 - **`/tech-research`** - 技術調査（フレームワーク・ライブラリ比較）
+- **`/pr-review`** - PRレビュー対応（レビューコメント取得・分析・修正実行）
 
 ### 使用例
 ```
@@ -316,6 +317,7 @@ templates/automation-setup.mdに従って、自動化ツールを設定してく
 /analyze-codebase パフォーマンス改善のためのコード分析
 /competitor-analysis ノートアプリの市場分析と差別化戦略
 /research PWAの導入可能性調査
+/pr-review 123 --priority critical --include-tests true
 ```
 
 **最初は完璧を目指さず、段階的にプロセスを改善していくことが成功の鍵です。**
