@@ -1,5 +1,11 @@
 # claude-code-template
 
+## 要件定義
+```bash
+claude code "requirements/interview-template.mdの手順で、事前に記入したtemplates/preparation-sheet.mdを元にヒアリングしてください"
+```
+
+## 実装
 ```bash
 # 具体的な指示例
 claude code "workflow/tdd-process.mdに従ってテストを作成し、
