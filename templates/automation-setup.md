@@ -230,6 +230,239 @@ SENDGRID_API_KEY=SG...
 - ホスティング: Vercel
 - 外部API: Stripe, SendGrid
 - ローカル開発: Supabase CLI + Docker
+- 静的解析: ESLint + Prettier + Husky
+```
+
+## コード品質・静的解析設定
+
+### 9. ESLint設定
+
+#### 目的
+TypeScript・React・Next.jsに最適化されたリンティング
+
+#### 設定手順
+```bash
+# ESLint関連パッケージインストール
+npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+npm install -D eslint-plugin-react eslint-plugin-react-hooks
+npm install -D eslint-plugin-jsx-a11y eslint-plugin-import
+npm install -D eslint-config-next
+```
+
+**.eslintrc.json**:
+```json
+{
+  "extends": [
+    "next/core-web-vitals",
+    "@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "jsx-a11y",
+    "import"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external", 
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": {}
+    }
+  }
+}
+```
+
+**.eslintignore**:
+```
+node_modules/
+.next/
+out/
+build/
+dist/
+*.min.js
+coverage/
+docs/
+supabase/
+```
+
+### 10. Prettier設定
+
+#### 目的
+一貫したコードフォーマット
+
+#### 設定手順
+```bash
+# Prettierインストール
+npm install -D prettier eslint-config-prettier eslint-plugin-prettier
+```
+
+**.prettierrc.json**:
+```json
+{
+  "semi": false,
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": true,
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "avoid",
+  "endOfLine": "lf"
+}
+```
+
+**.prettierignore**:
+```
+node_modules/
+.next/
+out/
+build/
+dist/
+*.min.js
+coverage/
+docs/
+supabase/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+```
+
+### 11. Husky + lint-staged設定
+
+#### 目的
+コミット前の自動品質チェック
+
+#### 設定手順
+```bash
+# Huskyとlint-stagedインストール
+npm install -D husky lint-staged
+
+# Husky初期化
+npx husky init
+```
+
+**package.json更新**:
+```json
+{
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "quality": "npm run lint && npm run format:check && npm run type-check"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,mdx,css,html,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}
+```
+
+**.husky/pre-commit**:
+```bash
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# lint-staged実行
+npx lint-staged
+
+# 型チェック
+npm run type-check
+```
+
+**.husky/commit-msg**:
+```bash
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Conventional Commits形式チェック
+npx commitlint --edit $1
+```
+
+### 12. commitlint設定
+
+#### 目的
+Conventional Commits形式の強制
+
+#### 設定手順
+```bash
+# commitlintインストール
+npm install -D @commitlint/cli @commitlint/config-conventional
+```
+
+**commitlint.config.js**:
+```javascript
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'type-enum': [
+      2,
+      'always',
+      [
+        'feat',     // 新機能
+        'fix',      // バグ修正
+        'docs',     // ドキュメント
+        'style',    // コードスタイル
+        'refactor', // リファクタリング
+        'test',     // テスト
+        'chore',    // その他
+        'perf',     // パフォーマンス
+        'ci',       // CI/CD
+        'build',    // ビルド
+        'revert'    // リバート
+      ]
+    ],
+    'subject-case': [2, 'never', ['pascal-case', 'upper-case']],
+    'subject-max-length': [2, 'always', 100],
+    'body-max-line-length': [2, 'always', 100]
+  }
+}
 ```
 
 ### 5. テストカバレッジレポート
@@ -271,6 +504,7 @@ export default defineConfig({
 
 ### GitHub Actions設定
 
+#### 1. ドキュメント自動更新
 **.github/workflows/docs.yml**:
 ```yaml
 name: Auto Documentation Update
@@ -318,7 +552,129 @@ jobs:
         git push
 ```
 
+#### 2. 静的解析・品質チェック
+**.github/workflows/quality.yml**:
+```yaml
+name: Code Quality Check
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: ESLint Check
+      run: npm run lint
+    
+    - name: Prettier Check
+      run: npm run format:check
+    
+    - name: TypeScript Check
+      run: npm run type-check
+    
+    - name: Run Tests
+      run: npm run test
+    
+    - name: Test Coverage
+      run: npm run test:coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        fail_ci_if_error: true
+
+  security-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Security Audit
+      run: npm audit --audit-level moderate
+    
+    - name: Dependency Check
+      run: npx audit-ci --moderate
+```
+
 ## Claude Code向け設定確認
+
+### VS Code ワークスペース設定
+
+#### 1. 設定ファイル
+**.vscode/settings.json**:
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.rulers": [80],
+  "files.associations": {
+    "*.tsx": "typescriptreact",
+    "*.ts": "typescript"
+  },
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "eslint.workingDirectories": ["./"],
+  "prettier.requireConfig": true,
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/.husky/_": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/coverage": true
+  }
+}
+```
+
+**.vscode/extensions.json**:
+```json
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-json"
+  ]
+}
+```
 
 ### 導入確認スクリプト
 
@@ -330,16 +686,35 @@ const fs = require('fs');
 function checkAutomationSetup() {
   const checks = [
     { name: 'package.json scripts', path: 'package.json' },
-    { name: 'Swagger config', path: 'swagger.config.js' },
+    { name: 'ESLint config', path: '.eslintrc.json' },
+    { name: 'Prettier config', path: '.prettierrc.json' },
+    { name: 'Husky pre-commit', path: '.husky/pre-commit' },
+    { name: 'commitlint config', path: 'commitlint.config.js' },
     { name: 'TypeDoc config', path: 'typedoc.json' },
-    { name: 'GitHub Actions', path: '.github/workflows/docs.yml' }
+    { name: 'GitHub Actions - docs', path: '.github/workflows/docs.yml' },
+    { name: 'GitHub Actions - quality', path: '.github/workflows/quality.yml' },
+    { name: 'VS Code settings', path: '.vscode/settings.json' },
+    { name: 'VS Code extensions', path: '.vscode/extensions.json' }
   ];
 
   console.log('🔍 自動化設定チェック結果:');
+  console.log('================================================');
+  
+  let passCount = 0;
   checks.forEach(check => {
     const exists = fs.existsSync(check.path);
-    console.log(`${exists ? '✅' : '❌'} ${check.name}`);
+    console.log(`${exists ? '✅' : '❌'} ${check.name.padEnd(30)} ${check.path}`);
+    if (exists) passCount++;
   });
+  
+  console.log('================================================');
+  console.log(`✅ 成功: ${passCount}/${checks.length} 項目`);
+  
+  if (passCount === checks.length) {
+    console.log('🎉 すべての自動化設定が完了しています！');
+  } else {
+    console.log('⚠️  不足している設定があります。上記を確認してください。');
+  }
 }
 
 checkAutomationSetup();
@@ -350,12 +725,31 @@ checkAutomationSetup();
 **新規プロジェクトでの指示例**:
 ```bash
 "templates/automation-setup.mdに従って、以下の自動化を設定してください：
-1. Conventional Commits対応
-2. API仕様書自動生成
-3. 型定義ドキュメント生成
-4. GitHub Actions設定
+1. ESLint・Prettier・Husky設定
+2. Conventional Commits対応
+3. API仕様書自動生成
+4. 型定義ドキュメント生成
+5. GitHub Actions設定（品質チェック・ドキュメント更新）
+6. VS Code ワークスペース設定
 
 設定完了後、scripts/check-automation.jsで確認してください。"
+```
+
+### クイックセットアップコマンド
+
+**package.json への一括追加スクリプト**:
+```json
+{
+  "scripts": {
+    "setup:lint": "npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-jsx-a11y eslint-plugin-import eslint-config-next",
+    "setup:prettier": "npm install -D prettier eslint-config-prettier eslint-plugin-prettier",
+    "setup:husky": "npm install -D husky lint-staged && npx husky init",
+    "setup:commitlint": "npm install -D @commitlint/cli @commitlint/config-conventional",
+    "setup:docs": "npm install -D conventional-changelog-cli typedoc swagger-jsdoc swagger-ui-express @types/swagger-jsdoc @types/swagger-ui-express",
+    "setup:all": "npm run setup:lint && npm run setup:prettier && npm run setup:husky && npm run setup:commitlint && npm run setup:docs",
+    "check:setup": "node scripts/check-automation.js"
+  }
+}
 ```
 
 ## トラブルシューティング
