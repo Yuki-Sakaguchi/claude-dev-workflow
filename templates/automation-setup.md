@@ -336,7 +336,7 @@ npm install -D prettier eslint-config-prettier eslint-plugin-prettier
 **.prettierrc.json**:
 ```json
 {
-  "semi": false,
+  "semi": true,
   "trailingComma": "es5",
   "singleQuote": true,
   "printWidth": 80,
