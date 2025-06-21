@@ -274,11 +274,11 @@ MIT License - 詳細は [LICENSE](LICENSE) ファイルを参照してくださ�
 
 プロジェクトが役に立ったら、ぜひStarをお願いします！
 
-[![Star History Chart](https://api.star-history.com/svg?repos=your-username/claude-code-workflow&type=Date)](https://star-history.com/#your-username/claude-code-workflow&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Yuki-Sakaguchi/claude-code-template&type=Date)](https://star-history.com/#Yuki-Sakaguchi/claude-code-template&Date)
 
 ---
 
 **Happy Coding with Claude! 🚀**
 
 このガイドラインで、あなたの開発ライフが劇的に改善されることを願っています。
-質問や改善案があれば、お気軽に [Issues](https://github.com/your-username/claude-code-workflow/issues) でお知らせください！
+質問や改善案があれば、お気軽に [Issues](https://github.com/Yuki-Sakaguchi/claude-code-template/issues) でお知らせください！
