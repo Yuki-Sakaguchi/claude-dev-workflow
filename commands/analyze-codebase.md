@@ -118,6 +118,20 @@
 - 実装ロードマップ（段階的改善計画）
 - リスク評価・継続的改善計画
 
+## ファイル保存場所
+
+**分析結果は `docs/idea/` ディレクトリに保存してください**
+
+ファイル名規則：
+- コードベース分析: `docs/idea/codebase_YYYYMMDD_[プロジェクト名]_analysis.md`
+- パフォーマンス分析: `docs/idea/performance_YYYYMMDD_[対象]_analysis.md`
+- セキュリティ分析: `docs/idea/security_YYYYMMDD_[対象]_analysis.md`
+
+例：
+- `docs/idea/codebase_20240120_ecommerce_app_analysis.md`
+- `docs/idea/performance_20240120_react_frontend_analysis.md`
+- `docs/idea/security_20240120_api_endpoints_analysis.md`
+
 ## 品質基準
 
 - [ ] コードベース全体の構造を把握

@@ -59,6 +59,20 @@
 - 比較分析・評価（数値・定性両面）
 - 推奨事項・実行計画（優先度付き）
 
+## ファイル保存場所
+
+**調査結果は `docs/idea/` ディレクトリに保存してください**
+
+ファイル名規則：
+- 一般調査: `docs/idea/research_YYYYMMDD_[調査テーマ].md`
+- 技術調査: `docs/idea/tech_YYYYMMDD_[技術名]_comparison.md`
+- 市場調査: `docs/idea/market_YYYYMMDD_[分野]_analysis.md`
+
+例：
+- `docs/idea/research_20240120_pwa_feasibility.md`
+- `docs/idea/tech_20240120_nextjs_vs_nuxtjs.md`
+- `docs/idea/market_20240120_note_apps_analysis.md`
+
 ## 品質基準
 
 - [ ] 複数の信頼できる情報源を使用

@@ -160,6 +160,20 @@ Threats: 新技術台頭、メンテナンス負荷
 - 比較分析・総合評価（他技術との比較・適用推奨）
 - 導入計画・リスク評価（実装手順・注意事項）
 
+## ファイル保存場所
+
+**技術調査結果は `docs/idea/` ディレクトリに保存してください**
+
+ファイル名規則：
+- 技術比較: `docs/idea/tech_YYYYMMDD_[技術A]_vs_[技術B].md`
+- 技術評価: `docs/idea/tech_YYYYMMDD_[技術名]_evaluation.md`
+- ツール調査: `docs/idea/tool_YYYYMMDD_[分野]_research.md`
+
+例：
+- `docs/idea/tech_20240120_nextjs_vs_nuxtjs.md`
+- `docs/idea/tech_20240120_docker_vs_podman_evaluation.md`
+- `docs/idea/tool_20240120_ci_cd_platforms_research.md`
+
 ## 品質基準
 
 - [ ] 公式・信頼できる情報源を活用

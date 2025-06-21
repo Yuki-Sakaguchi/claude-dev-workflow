@@ -124,6 +124,20 @@
 - 市場分析・トレンド（市場規模・成長性・将来予測）
 - 戦略提案（差別化戦略・参入機会・リスク対策）
 
+## ファイル保存場所
+
+**競合分析結果は `docs/idea/` ディレクトリに保存してください**
+
+ファイル名規則：
+- 競合分析: `docs/idea/competitor_YYYYMMDD_[分野]_analysis.md`
+- 市場分析: `docs/idea/market_YYYYMMDD_[業界]_analysis.md`
+- ポジショニング分析: `docs/idea/positioning_YYYYMMDD_[カテゴリ]_analysis.md`
+
+例：
+- `docs/idea/competitor_20240120_note_apps_analysis.md`
+- `docs/idea/market_20240120_productivity_tools_analysis.md`
+- `docs/idea/positioning_20240120_task_management_analysis.md`
+
 ## 比較分析フレームワーク
 
 ### 機能比較マトリックス

@@ -259,7 +259,30 @@ Next.js vs Nuxt.js の比較調査を開始します。
 - **更新通知**: 関連情報の更新時の自動通知
 
 ### 調査結果の蓄積・活用
-- **ナレッジベース**: 調査結果の体系的な蓄積
+- **ファイル保存**: `docs/idea/` ディレクトリへの体系的保存
+- **命名規則**: 調査種別・対象・日付による統一的なファイル名
 - **検索・参照**: 過去の調査結果の効率的な検索
 - **更新管理**: 時間経過による情報の更新・無効化管理
 - **再利用促進**: 類似調査での結果再利用・参照
+
+### ファイル管理規則
+```
+docs/idea/
+├── research_YYYYMMDD_*.md    # 一般調査
+├── tech_YYYYMMDD_*.md        # 技術調査・比較
+├── competitor_YYYYMMDD_*.md  # 競合分析
+├── codebase_YYYYMMDD_*.md    # コードベース分析
+├── performance_YYYYMMDD_*.md # パフォーマンス分析
+└── market_YYYYMMDD_*.md      # 市場分析
+```
+
+ファイル名例：
+```
+docs/idea/
+├── research_20240120_pwa_feasibility.md
+├── tech_20240120_nextjs_vs_nuxtjs.md
+├── competitor_20240120_note_apps_analysis.md
+├── codebase_20240120_ecommerce_app_analysis.md
+├── performance_20240120_react_frontend_analysis.md
+└── market_20240120_productivity_tools_analysis.md
+```
