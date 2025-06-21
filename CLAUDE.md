@@ -288,6 +288,8 @@ templates/automation-setup.mdに従って、自動化ツールを設定してく
 - [Storybook](https://storybook.js.org/) - UIコンポーネント開発
 - [Playwright](https://playwright.dev/) - E2Eテスト
 - [TypeScript](https://www.typescriptlang.org/) - 型安全な開発
+- [Supabase](https://supabase.com/) - BaaS（DB・Auth・Storage統合）
+- [Supabase CLI](https://supabase.com/docs/guides/cli) - ローカル開発環境
 
 ---
 

@@ -159,6 +159,79 @@ function updateFeatureList(newFeature) {
 module.exports = { updateFeatureList };
 ```
 
+## Supabase統合設定
+
+### 6. Supabase開発環境構築
+
+#### 目的
+DB・Auth・Storage統合、ローカル開発環境構築
+
+#### 設定手順
+```bash
+# 1. Supabase CLI 設定（npx使用、環境に依存しない）
+npm install -D supabase
+
+# 2. package.json スクリプト追加
+{
+  "scripts": {
+    "db:start": "supabase start",
+    "db:stop": "supabase stop", 
+    "db:reset": "supabase db reset",
+    "db:gen-types": "supabase gen types typescript --local > types/database.types.ts"
+  }
+}
+
+# 3. プロジェクト初期化
+npx supabase init
+npm run db:start
+
+# 4. 必要パッケージインストール
+npm install @supabase/supabase-js @supabase/auth-ui-react @supabase/auth-ui-shared
+```
+
+**詳細設定**: `templates/supabase-setup.md` を参照
+
+#### Claude Code実行例
+```bash
+# 型定義自動更新
+npm run db:gen-types
+
+# マイグレーション適用
+npm run db:reset
+```
+
+### 7. 環境変数テンプレート更新
+
+**.env.local**:
+```env
+# Supabase設定（ローカル開発）
+NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# 本番環境用（コメントアウト）
+# NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# その他の環境変数
+STRIPE_SECRET_KEY=sk_test_...
+SENDGRID_API_KEY=SG...
+```
+
+### 8. 推奨技術スタック
+
+**更新された推奨構成**:
+```
+- 言語: TypeScript
+- フロントエンド: Next.js (React)
+- バックエンド: Next.js (Server Actions)
+- データベース: Supabase (PostgreSQL)
+- 認証: Supabase Auth
+- ストレージ: Supabase Storage
+- ホスティング: Vercel
+- 外部API: Stripe, SendGrid
+- ローカル開発: Supabase CLI + Docker
+```
+
 ### 5. テストカバレッジレポート
 
 #### 目的
