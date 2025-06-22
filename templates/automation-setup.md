@@ -784,3 +784,38 @@ checkAutomationSetup();
 - 新しいAPIエンドポイント追加時 → swagger.config.js更新
 - 新しいTypeScript型追加時 → typedoc.json確認
 - 新しい機能カテゴリ追加時 → README更新スクリプト修正
+
+## バックアップ管理設定
+
+### Claude Dev Workflow設定バックアップ
+
+#### 目的
+開発環境の設定ミスやアップデート失敗時の安全な復旧
+
+#### 設定手順
+```bash
+# バックアップスクリプトは自動インストール済み
+# 手動実行でバックアップ作成
+~/.claude/scripts/backup.sh backup
+
+# 定期実行設定（オプション - cron設定）
+crontab -e
+# 毎日午前2時にバックアップ作成
+0 2 * * * ~/.claude/scripts/backup.sh backup >/dev/null 2>&1
+```
+
+#### Claude Code実行例
+```bash
+# 重要な変更前にバックアップ作成
+~/.claude/scripts/backup.sh backup
+
+# 問題発生時の復旧
+~/.claude/scripts/backup.sh list
+~/.claude/scripts/backup.sh restore 1
+```
+
+#### 推奨運用
+- **重要な設定変更前**: 必ずバックアップ作成
+- **アップデート前**: `update.sh` 実行前に手動バックアップ
+- **定期クリーンアップ**: 月1回古いバックアップ削除
+- **復旧テスト**: 定期的な復旧手順確認
