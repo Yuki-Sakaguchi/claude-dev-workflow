@@ -60,20 +60,18 @@ Claude Dev Workflow のバックアップ管理スクリプト
 
 **使用方法**:
 ```bash
-# バックアップ作成
-~/.claude/scripts/backup.sh backup
+# ローカル実行
+~/.claude/scripts/backup.sh backup        # バックアップ作成
+~/.claude/scripts/backup.sh list          # バックアップ一覧表示
+~/.claude/scripts/backup.sh restore 1     # 指定したバックアップから復元
+~/.claude/scripts/backup.sh cleanup       # 古いバックアップ削除
+~/.claude/scripts/backup.sh help          # ヘルプ表示
 
-# バックアップ一覧表示
-~/.claude/scripts/backup.sh list
-
-# 指定したバックアップから復元
-~/.claude/scripts/backup.sh restore 1
-
-# 古いバックアップ削除
-~/.claude/scripts/backup.sh cleanup
-
-# ヘルプ表示
-~/.claude/scripts/backup.sh help
+# リモート実行（HTTPS経由）
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s backup
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s list
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s restore 1
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s cleanup
 ```
 
 **バックアップ場所**: `~/.claude-backups/`  
@@ -116,22 +114,22 @@ curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/mai
 ### 定期メンテナンス
 ```bash
 # 1. 現在の設定をバックアップ
-~/.claude/scripts/backup.sh backup
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s backup
 
 # 2. 最新版に更新
 curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/update.sh | bash
 
 # 3. 古いバックアップを削除
-~/.claude/scripts/backup.sh cleanup
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s cleanup
 ```
 
 ### 問題発生時の復旧
 ```bash
 # 1. バックアップ一覧確認
-~/.claude/scripts/backup.sh list
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s list
 
 # 2. 適切なバックアップから復元
-~/.claude/scripts/backup.sh restore 2
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/backup.sh | bash -s restore 2
 
 # 3. 動作確認
 ls -la ~/.claude/
