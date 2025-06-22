@@ -23,7 +23,11 @@ readonly TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 readonly GITHUB_REPO="https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main"
 
 # 実行環境判定（ローカル実行 vs curlパイプ実行）
-if [[ "${0}" =~ ^/dev/fd/ ]] || [[ "${0}" == "bash" ]] || [[ -z "${BASH_SOURCE[0]:-}" ]]; then
+# デバッグ用
+#echo "Debug: \$0 = $0" >&2
+#echo "Debug: BASH_SOURCE[0] = ${BASH_SOURCE[0]:-}" >&2
+
+if [[ "${0}" == "bash" ]] || [[ "${0}" =~ ^/dev/fd/ ]] || [[ -z "${BASH_SOURCE[0]:-}" ]]; then
     # curlパイプ実行（stdin経由）
     readonly EXECUTION_MODE="curl"
     readonly SCRIPT_DIR=""
