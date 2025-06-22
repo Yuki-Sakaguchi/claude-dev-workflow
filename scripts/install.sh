@@ -137,6 +137,61 @@ download_from_github() {
     fi
 }
 
+# GitHub APIからディレクトリ内のファイル一覧を取得（再帰的）
+get_directory_files() {
+    local dir_name="$1"
+    local api_url="https://api.github.com/repos/Yuki-Sakaguchi/claude-dev-workflow/contents/${dir_name}"
+    
+    # GitHub APIからレスポンスを取得
+    local response
+    response=$(curl -sf "$api_url")
+    
+    if [[ -z "$response" ]]; then
+        return 1
+    fi
+    
+    # ファイルとディレクトリを分別して処理
+    local files=()
+    local dirs=()
+    
+    # .mdファイルを抽出
+    while IFS= read -r line; do
+        if [[ "$line" =~ \"name\":\ \"([^\"]+\.md)\" ]]; then
+            files+=("${BASH_REMATCH[1]}")
+        fi
+    done <<< "$response"
+    
+    # サブディレクトリを抽出
+    while IFS= read -r line; do
+        if [[ "$line" =~ \"type\":\ \"dir\" ]]; then
+            # 同じエントリブロック内でディレクトリ名を探す
+            local dir_block
+            dir_block=$(echo "$response" | grep -A5 -B5 "$line")
+            if [[ "$dir_block" =~ \"name\":\ \"([^\"]+)\" ]]; then
+                dirs+=("${BASH_REMATCH[1]}")
+            fi
+        fi
+    done <<< "$response"
+    
+    # 直接のファイルを出力
+    if [[ ${#files[@]} -gt 0 ]]; then
+        for file in "${files[@]}"; do
+            echo "$file"
+        done
+    fi
+    
+    # サブディレクトリ内のファイルを再帰的に取得
+    if [[ ${#dirs[@]} -gt 0 ]]; then
+        for dir in "${dirs[@]}"; do
+            local subdir_files
+            subdir_files=$(get_directory_files "${dir_name}/${dir}")
+            while IFS= read -r subfile; do
+                [[ -n "$subfile" ]] && echo "${dir}/${subfile}"
+            done <<< "$subdir_files"
+        done
+    fi
+}
+
 # ディレクトリを再帰的にダウンロード
 download_directory() {
     local dir_name="$1"
@@ -145,39 +200,50 @@ download_directory() {
     # ディレクトリ作成
     mkdir -p "$dest_dir"
     
-    # 各ディレクトリの主要ファイルを個別にダウンロード
-    case "$dir_name" in
-        "commands")
-            local files=("research.md" "analyze-codebase.md" "competitor-analysis.md" "tech-research.md" "pr-review.md")
-            ;;
-        "requirements")
-            local files=("interview-template.md" "document-structure.md")
-            ;;
-        "workflow")
-            local files=("development-flow.md" "git-workflow.md" "tdd-process.md" "research-process.md" "analysis-methods.md")
-            ;;
-        "templates")
-            local files=("preparation-sheet.md" "automation-setup.md" "issue-template.md" "pr-template.md" "commit-message.md" "research-template.md" "analysis-report.md")
-            ;;
-        "docs")
-            local files=("README.md")
-            ;;
-        *)
-            log_warning "未知のディレクトリ: $dir_name"
-            return 1
-            ;;
-    esac
+    # GitHub APIからファイル一覧を動的に取得
+    log_info "  GitHubからファイル一覧を取得中..."
+    local files_list
+    files_list=$(get_directory_files "$dir_name")
     
+    if [[ -z "$files_list" ]]; then
+        log_warning "  ファイル一覧の取得に失敗: $dir_name"
+        return 1
+    fi
+    
+    # 取得したファイルを配列に変換
+    local files=()
+    while IFS= read -r file; do
+        [[ -n "$file" ]] && files+=("$file")
+    done <<< "$files_list"
+    
+    if [[ ${#files[@]} -eq 0 ]]; then
+        log_warning "  .mdファイルが見つかりません: $dir_name"
+        return 1
+    fi
+    
+    log_info "  ${#files[@]}個のファイルを発見: $dir_name"
+    
+    # 各ファイルをダウンロード
+    local success_count=0
     for file in "${files[@]}"; do
         local file_path="${dir_name}/${file}"
         local dest_file_path="${dest_dir}/${file}"
         
+        # サブディレクトリが含まれている場合、ディレクトリ構造を作成
+        local dest_file_dir
+        dest_file_dir=$(dirname "$dest_file_path")
+        mkdir -p "$dest_file_dir"
+        
         if download_from_github "$file_path" "$dest_file_path"; then
-            log_success "ダウンロード完了: $file_path"
+            log_success "  ダウンロード完了: $file"
+            ((success_count++))
         else
-            log_warning "ダウンロード失敗 (スキップ): $file_path"
+            log_warning "  ダウンロード失敗 (スキップ): $file"
         fi
     done
+    
+    log_info "  ${success_count}/${#files[@]} ファイルのダウンロードが完了"
+    return 0
 }
 
 # ファイルコピー（ローカル実行）またはダウンロード（curl実行）
