@@ -18,7 +18,7 @@ set -euo pipefail
 
 # 設定
 readonly CLAUDE_DIR="$HOME/.claude"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 readonly BACKUP_PREFIX="$HOME/.claude.backup"
 readonly TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
@@ -249,6 +249,6 @@ main() {
 }
 
 # スクリプト実行
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ "${BASH_SOURCE[0]:-$0}" == "${0}" ]]; then
     main "$@"
 fi
