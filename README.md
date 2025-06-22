@@ -20,19 +20,16 @@ Claude Codeとの協働で個人開発を3-5倍効率化するためのガイド
 
 ## セットアップ
 
-### 🚀 自動インストール
+### 🚀 インストール
 
-以下のコマンドで `~/.claude/` 配下に `CLAUDE.md` などのファイルが配置されます。
+以下のコマンドで `~/.claude/` 配下に `CLAUDE.md` などのファイルが配置されます。  
+既存のファイルは変更しません。  
 
 ```bash
 curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/install.sh | bash
 ```
 
-その他のアップデートコマンドは [scripts - README.md](scripts/README.md)
-
-### 📂 インストール後の構成
-
-既存のファイルは変更しません。  
+以下のファイルが展開されます。
 
 ```
 ~/.claude/
@@ -58,39 +55,43 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 利用可能なコマンド: /start-project, /implement, /auto-review など
 ```
 
-## 使えるコマンド一覧
+その他のアップデートコマンドは [scripts - README.md](scripts/README.md)
+
+## 使い方
+
+###  使えるコマンド一覧
 [commands - README.md](commands/README.md)
 
-## 🚀 開発スタート
+### 🚀 開発スタート
 
-### Step 1: 最初のプロジェクト作成
+#### Step 1: 最初のプロジェクト作成
 ```bash
 /start-project [プロジェクト名]
 ```
 30分で要件定義〜GitHub Issue作成まで完了
 
-### Step 2: 開発開始
+#### Step 2: 開発開始
 ```bash
 /implement issue #1
 ```
 1つのコマンドで実装〜テスト〜PR作成まで自動実行
 
-### Step 3: 品質チェック
+#### Step 3: 品質チェック
 ```bash
 /auto-review feature/issue-15-payment
 ```
 プロレベルの自動コードレビューで品質確保
 
-## 📋 その他の使い方
+### 📋 その他の使い方
 
-### 調査・分析が必要な時
+#### 調査・分析が必要な時
 ```bash
 /tech-research Next.js vs Nuxt.js    # 技術比較調査
 /competitor-analysis Notion          # 競合分析
 /analyze-codebase                    # コードベース分析
 ```
 
-## トラブルシューティング
+## ⚠️ トラブルシューティング
 
 ### Claude Codeが期待通りに動作しない
 1. `/clear` を実行し、メモリをクリアにする
