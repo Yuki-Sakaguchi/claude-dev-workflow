@@ -18,10 +18,22 @@ set -euo pipefail
 
 # 設定
 readonly CLAUDE_DIR="$HOME/.claude"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 readonly BACKUP_PREFIX="$HOME/.claude.backup"
 readonly TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+readonly GITHUB_REPO="https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main"
+
+# 実行環境判定（ローカル実行 vs curlパイプ実行）
+if [[ -n "${BASH_SOURCE[0]:-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    # curlパイプ実行
+    readonly EXECUTION_MODE="curl"
+    readonly SCRIPT_DIR=""
+    readonly PROJECT_ROOT=""
+else
+    # ローカル実行
+    readonly EXECUTION_MODE="local"
+    readonly SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
+    readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+fi
 
 # 色定義
 readonly RED='\033[0;31m'
@@ -108,9 +120,65 @@ backup_existing() {
     fi
 }
 
-# ファイルコピー
+# GitHubからファイルをダウンロード
+download_from_github() {
+    local file_path="$1"
+    local dest_path="$2"
+    local url="${GITHUB_REPO}/${file_path}"
+    
+    if curl -sf "$url" -o "$dest_path"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# ディレクトリを再帰的にダウンロード
+download_directory() {
+    local dir_name="$1"
+    local dest_dir="$CLAUDE_DIR/$dir_name"
+    
+    # ディレクトリ作成
+    mkdir -p "$dest_dir"
+    
+    # 各ディレクトリの主要ファイルを個別にダウンロード
+    case "$dir_name" in
+        "commands")
+            local files=("research.md" "analyze-codebase.md" "competitor-analysis.md" "tech-research.md" "pr-review.md")
+            ;;
+        "requirements")
+            local files=("interview-template.md" "document-structure.md")
+            ;;
+        "workflow")
+            local files=("development-flow.md" "git-workflow.md" "tdd-process.md" "research-process.md" "analysis-methods.md")
+            ;;
+        "templates")
+            local files=("preparation-sheet.md" "automation-setup.md" "issue-template.md" "pr-template.md" "commit-message.md" "research-template.md" "analysis-report.md")
+            ;;
+        "docs")
+            local files=("README.md")
+            ;;
+        *)
+            log_warning "未知のディレクトリ: $dir_name"
+            return 1
+            ;;
+    esac
+    
+    for file in "${files[@]}"; do
+        local file_path="${dir_name}/${file}"
+        local dest_file_path="${dest_dir}/${file}"
+        
+        if download_from_github "$file_path" "$dest_file_path"; then
+            log_success "ダウンロード完了: $file_path"
+        else
+            log_warning "ダウンロード失敗 (スキップ): $file_path"
+        fi
+    done
+}
+
+# ファイルコピー（ローカル実行）またはダウンロード（curl実行）
 copy_files() {
-    log_info "ファイルをコピーしています..."
+    log_info "ファイルを取得しています..."
     
     # ディレクトリ作成
     if ! mkdir -p "$CLAUDE_DIR"; then
@@ -130,23 +198,48 @@ copy_files() {
     local total_files=${#source_files[@]}
     local current=0
     
-    for file in "${source_files[@]}"; do
-        current=$((current + 1))
-        local source_path="$PROJECT_ROOT/$file"
-        local dest_path="$CLAUDE_DIR/$file"
-        
-        if [[ -e "$source_path" ]]; then
-            log_info "[$current/$total_files] コピー中: $file"
+    if [[ "$EXECUTION_MODE" == "local" ]]; then
+        # ローカル実行時
+        for file in "${source_files[@]}"; do
+            current=$((current + 1))
+            local source_path="$PROJECT_ROOT/$file"
             
-            if rsync -a "$source_path" "$CLAUDE_DIR/"; then
-                log_success "コピー完了: $file"
+            if [[ -e "$source_path" ]]; then
+                log_info "[$current/$total_files] コピー中: $file"
+                
+                if rsync -a "$source_path" "$CLAUDE_DIR/"; then
+                    log_success "コピー完了: $file"
+                else
+                    error_exit "ファイルのコピーに失敗しました: $file"
+                fi
             else
-                error_exit "ファイルのコピーに失敗しました: $file"
+                log_warning "ファイルが見つかりません (スキップ): $file"
             fi
-        else
-            log_warning "ファイルが見つかりません (スキップ): $file"
-        fi
-    done
+        done
+    else
+        # curl実行時
+        for file in "${source_files[@]}"; do
+            current=$((current + 1))
+            log_info "[$current/$total_files] ダウンロード中: $file"
+            
+            if [[ "$file" == "CLAUDE.md" ]]; then
+                # 単一ファイルの場合
+                local dest_path="$CLAUDE_DIR/$file"
+                if download_from_github "$file" "$dest_path"; then
+                    log_success "ダウンロード完了: $file"
+                else
+                    error_exit "ファイルのダウンロードに失敗しました: $file"
+                fi
+            else
+                # ディレクトリの場合
+                if download_directory "$file"; then
+                    log_success "ディレクトリダウンロード完了: $file"
+                else
+                    log_warning "ディレクトリダウンロード失敗 (一部ファイルのみ): $file"
+                fi
+            fi
+        done
+    fi
 }
 
 # インストール検証
@@ -249,6 +342,4 @@ main() {
 }
 
 # スクリプト実行
-if [[ "${BASH_SOURCE[0]:-$0}" == "${0}" ]]; then
-    main "$@"
-fi
+main "$@"
