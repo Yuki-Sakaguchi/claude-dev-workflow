@@ -154,9 +154,9 @@ get_directory_files() {
     local files=()
     local dirs=()
     
-    # .mdファイルを抽出
+    # .mdファイルと.shファイルを抽出
     while IFS= read -r line; do
-        if [[ "$line" =~ \"name\":\ \"([^\"]+\.md)\" ]]; then
+        if [[ "$line" =~ \"name\":\ \"([^\"]+\.(md|sh))\" ]]; then
             files+=("${BASH_REMATCH[1]}")
         fi
     done <<< "$response"
@@ -263,6 +263,7 @@ copy_files() {
         "workflow"
         "templates"
         "docs"
+        "scripts"
     )
     
     local total_files=${#source_files[@]}
@@ -322,6 +323,7 @@ verify_installation() {
         "$CLAUDE_DIR/commands"
         "$CLAUDE_DIR/templates"
         "$CLAUDE_DIR/workflow"
+        "$CLAUDE_DIR/scripts"
     )
     
     for file in "${required_files[@]}"; do

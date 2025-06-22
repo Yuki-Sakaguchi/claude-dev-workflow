@@ -20,12 +20,24 @@ set -euo pipefail
 
 # 設定
 readonly CLAUDE_DIR="$HOME/.claude"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 readonly BACKUP_PREFIX="$HOME/.claude.backup"
 readonly TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 readonly VERSION_FILE="$CLAUDE_DIR/.claude-version"
 readonly CUSTOM_FILES_LIST="$CLAUDE_DIR/.custom-files"
+readonly GITHUB_REPO="https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main"
+
+# 実行環境判定（ローカル実行 vs curlパイプ実行）
+if [[ "${0}" == "bash" ]] || [[ "${0}" =~ ^/dev/fd/ ]] || [[ -z "${BASH_SOURCE[0]:-}" ]]; then
+    # curlパイプ実行（stdin経由）
+    readonly EXECUTION_MODE="curl"
+    readonly SCRIPT_DIR=""
+    readonly PROJECT_ROOT=""
+else
+    # ローカル実行
+    readonly EXECUTION_MODE="local"
+    readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+    readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+fi
 
 # 色定義
 readonly RED='\033[0;31m'
@@ -82,19 +94,147 @@ get_current_version() {
 get_project_files() {
     local files=()
     
-    # CLAUDE.md
-    if [[ -f "$PROJECT_ROOT/CLAUDE.md" ]]; then
-        files+=("CLAUDE.md")
+    if [[ "$EXECUTION_MODE" == "local" ]]; then
+        # ローカル実行時
+        # CLAUDE.md
+        if [[ -f "$PROJECT_ROOT/CLAUDE.md" ]]; then
+            files+=("CLAUDE.md")
+        fi
+        
+        # ディレクトリ一覧を動的に取得
+        for dir in commands requirements workflow templates docs scripts; do
+            if [[ -d "$PROJECT_ROOT/$dir" ]]; then
+                files+=("$dir")
+            fi
+        done
+    else
+        # curlパイプ実行時は固定リスト
+        files=("CLAUDE.md" "commands" "requirements" "workflow" "templates" "docs" "scripts")
     fi
     
-    # ディレクトリ一覧を動的に取得
-    for dir in commands requirements workflow templates docs; do
-        if [[ -d "$PROJECT_ROOT/$dir" ]]; then
-            files+=("$dir")
+    printf '%s\n' "${files[@]}"
+}
+
+# GitHubからファイルをダウンロード
+download_from_github() {
+    local file_path="$1"
+    local dest_path="$2"
+    local url="${GITHUB_REPO}/${file_path}"
+    
+    if curl -sf "$url" -o "$dest_path"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# GitHub APIからディレクトリ内のファイル一覧を取得（再帰的）
+get_directory_files() {
+    local dir_name="$1"
+    local api_url="https://api.github.com/repos/Yuki-Sakaguchi/claude-dev-workflow/contents/${dir_name}"
+    
+    # GitHub APIからレスポンスを取得
+    local response
+    response=$(curl -sf "$api_url")
+    
+    if [[ -z "$response" ]]; then
+        return 1
+    fi
+    
+    # ファイルとディレクトリを分別して処理
+    local files=()
+    local dirs=()
+    
+    # .mdファイルと.shファイルを抽出
+    while IFS= read -r line; do
+        if [[ "$line" =~ \"name\":\ \"([^\"]+\.(md|sh))\" ]]; then
+            files+=("${BASH_REMATCH[1]}")
+        fi
+    done <<< "$response"
+    
+    # サブディレクトリを抽出
+    while IFS= read -r line; do
+        if [[ "$line" =~ \"type\":\ \"dir\" ]]; then
+            # 同じエントリブロック内でディレクトリ名を探す
+            local dir_block
+            dir_block=$(echo "$response" | grep -A5 -B5 "$line")
+            if [[ "$dir_block" =~ \"name\":\ \"([^\"]+)\" ]]; then
+                dirs+=("${BASH_REMATCH[1]}")
+            fi
+        fi
+    done <<< "$response"
+    
+    # 直接のファイルを出力
+    if [[ ${#files[@]} -gt 0 ]]; then
+        for file in "${files[@]}"; do
+            echo "$file"
+        done
+    fi
+    
+    # サブディレクトリ内のファイルを再帰的に取得
+    if [[ ${#dirs[@]} -gt 0 ]]; then
+        for dir in "${dirs[@]}"; do
+            local subdir_files
+            subdir_files=$(get_directory_files "${dir_name}/${dir}")
+            while IFS= read -r subfile; do
+                [[ -n "$subfile" ]] && echo "${dir}/${subfile}"
+            done <<< "$subdir_files"
+        done
+    fi
+}
+
+# ディレクトリを再帰的にダウンロード
+download_directory() {
+    local dir_name="$1"
+    local dest_dir="$CLAUDE_DIR/$dir_name"
+    
+    # ディレクトリ作成
+    mkdir -p "$dest_dir"
+    
+    # GitHub APIからファイル一覧を動的に取得
+    log_info "  GitHubからファイル一覧を取得中..."
+    local files_list
+    files_list=$(get_directory_files "$dir_name")
+    
+    if [[ -z "$files_list" ]]; then
+        log_warning "  ファイル一覧の取得に失敗: $dir_name"
+        return 1
+    fi
+    
+    # 取得したファイルを配列に変換
+    local files=()
+    while IFS= read -r file; do
+        [[ -n "$file" ]] && files+=("$file")
+    done <<< "$files_list"
+    
+    if [[ ${#files[@]} -eq 0 ]]; then
+        log_warning "  対象ファイルが見つかりません: $dir_name"
+        return 1
+    fi
+    
+    log_info "  ${#files[@]}個のファイルを発見: $dir_name"
+    
+    # 各ファイルをダウンロード
+    local success_count=0
+    for file in "${files[@]}"; do
+        local file_path="${dir_name}/${file}"
+        local dest_file_path="${dest_dir}/${file}"
+        
+        # サブディレクトリが含まれている場合、ディレクトリ構造を作成
+        local dest_file_dir
+        dest_file_dir=$(dirname "$dest_file_path")
+        mkdir -p "$dest_file_dir"
+        
+        if download_from_github "$file_path" "$dest_file_path"; then
+            log_success "  ダウンロード完了: $file"
+            ((success_count++))
+        else
+            log_warning "  ダウンロード失敗 (スキップ): $file"
         fi
     done
     
-    printf '%s\n' "${files[@]}"
+    log_info "  ${success_count}/${#files[@]} ファイルのダウンロードが完了"
+    return 0
 }
 
 # Git最新化チェック
@@ -331,44 +471,90 @@ update_files() {
     
     log_info "ファイルを更新しています..."
     
-    cd "$PROJECT_ROOT"
-    
-    # Git pull実行
-    if git pull origin $(git branch --show-current); then
-        log_success "Gitリポジトリの更新完了"
-    else
-        error_exit "Gitリポジトリの更新に失敗しました"
-    fi
-    
-    # Claude dirへのファイルコピー（動的取得）
-    local update_files=()
-    while IFS= read -r file; do
-        update_files+=("$file")
-    done < <(get_project_files)
-    
-    local updated_count=0
-    
-    for file in "${update_files[@]}"; do
-        # カスタマイズファイルはスキップ
-        if [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
-            log_warning "スキップ (カスタマイズ済み): $file"
-            continue
+    if [[ "$EXECUTION_MODE" == "local" ]]; then
+        # ローカル実行時: Git pullして通常の更新
+        cd "$PROJECT_ROOT"
+        
+        # Git pull実行
+        if git pull origin $(git branch --show-current); then
+            log_success "Gitリポジトリの更新完了"
+        else
+            error_exit "Gitリポジトリの更新に失敗しました"
         fi
         
-        local source_path="$PROJECT_ROOT/$file"
-        local dest_path="$CLAUDE_DIR/$file"
+        # Claude dirへのファイルコピー（動的取得）
+        local update_files=()
+        while IFS= read -r file; do
+            update_files+=("$file")
+        done < <(get_project_files)
         
-        if [[ -e "$source_path" ]]; then
-            if rsync -a "$source_path" "$CLAUDE_DIR/"; then
-                log_success "更新完了: $file"
-                updated_count=$((updated_count + 1))
-            else
-                log_error "更新失敗: $file"
+        local updated_count=0
+        
+        for file in "${update_files[@]}"; do
+            # カスタマイズファイルはスキップ
+            if [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
+                log_warning "スキップ (カスタマイズ済み): $file"
+                continue
             fi
-        fi
-    done
-    
-    log_info "更新されたファイル数: $updated_count"
+            
+            local source_path="$PROJECT_ROOT/$file"
+            local dest_path="$CLAUDE_DIR/$file"
+            
+            if [[ -e "$source_path" ]]; then
+                if rsync -a "$source_path" "$CLAUDE_DIR/"; then
+                    log_success "更新完了: $file"
+                    updated_count=$((updated_count + 1))
+                else
+                    log_error "更新失敗: $file"
+                fi
+            fi
+        done
+        
+        log_info "更新されたファイル数: $updated_count"
+    else
+        # curlパイプ実行時: GitHubから直接ダウンロード
+        local update_files=()
+        while IFS= read -r file; do
+            update_files+=("$file")
+        done < <(get_project_files)
+        
+        local total_files=${#update_files[@]}
+        local current=0
+        local updated_count=0
+        
+        for file in "${update_files[@]}"; do
+            current=$((current + 1))
+            
+            # カスタマイズファイルはスキップ
+            if [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
+                log_warning "[$current/$total_files] スキップ (カスタマイズ済み): $file"
+                continue
+            fi
+            
+            log_info "[$current/$total_files] 更新中: $file"
+            
+            if [[ "$file" == "CLAUDE.md" ]]; then
+                # 単一ファイルの場合
+                local dest_path="$CLAUDE_DIR/$file"
+                if download_from_github "$file" "$dest_path"; then
+                    log_success "更新完了: $file"
+                    ((updated_count++))
+                else
+                    log_error "更新失敗: $file"
+                fi
+            else
+                # ディレクトリの場合
+                if download_directory "$file"; then
+                    log_success "ディレクトリ更新完了: $file"
+                    ((updated_count++))
+                else
+                    log_warning "ディレクトリ更新失敗 (一部ファイルのみ): $file"
+                fi
+            fi
+        done
+        
+        log_info "更新されたファイル数: $updated_count"
+    fi
 }
 
 # 選択ファイル更新
@@ -509,31 +695,70 @@ main() {
     log_header "🔄 Claude Dev Workflow 更新開始"
     echo
     
+    # 実行環境の情報表示
+    if [[ "$EXECUTION_MODE" == "curl" ]]; then
+        log_info "実行環境: リモート (GitHub経由)"
+        log_info "GitHubから最新ファイルを直接ダウンロードします"
+        echo
+    else
+        log_info "実行環境: ローカル"
+        log_info "Gitリポジトリから更新します"
+        echo
+    fi
+    
     # 現在のバージョン表示
     log_info "現在のバージョン: $(get_current_version)"
     
-    # 更新チェック
-    if ! check_git_updates; then
-        exit 0
-    fi
-    
-    # 変更内容表示
-    show_changes
-    
-    # カスタマイズファイル検出
-    local custom_files=($(detect_custom_files))
-    
-    # ユーザー確認
-    confirm_result=$(confirm_update "${custom_files[*]}")
-    confirm_code=$?
-    
-    if [[ $confirm_code -eq 2 ]]; then
-        # 個別ファイル選択
-        create_backup
-        selective_update "${custom_files[*]}"
+    if [[ "$EXECUTION_MODE" == "local" ]]; then
+        # ローカル実行時のみGit更新チェック
+        if ! check_git_updates; then
+            exit 0
+        fi
+        
+        # 変更内容表示
+        show_changes
+        
+        # カスタマイズファイル検出
+        local custom_files=($(detect_custom_files))
+        
+        # ユーザー確認
+        confirm_result=$(confirm_update "${custom_files[*]}")
+        confirm_code=$?
+        
+        if [[ $confirm_code -eq 2 ]]; then
+            # 個別ファイル選択
+            create_backup
+            selective_update "${custom_files[*]}"
+        else
+            # 通常更新
+            create_backup
+            update_files "${custom_files[*]}"
+        fi
     else
-        # 通常更新
+        # curlパイプ実行時: シンプルな更新プロセス
+        log_info "リモート実行では強制的に全ファイルを更新します"
+        echo
+        
+        read -p "更新を実行しますか？ (y/n): " confirm
+        if [[ ! "$confirm" =~ ^[Yy] ]]; then
+            log_info "更新をキャンセルしました"
+            exit 0
+        fi
+        
+        # バックアップ作成
         create_backup
+        
+        # カスタマイズファイル検出（最小限）
+        local custom_files=()
+        if [[ -f "$CUSTOM_FILES_LIST" ]]; then
+            while IFS= read -r line; do
+                if [[ -n "$line" && ! "$line" =~ ^# ]]; then
+                    custom_files+=("$line")
+                fi
+            done < "$CUSTOM_FILES_LIST"
+        fi
+        
+        # GitHubから直接更新
         update_files "${custom_files[*]}"
     fi
     
