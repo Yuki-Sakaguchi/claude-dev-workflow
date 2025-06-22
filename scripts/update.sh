@@ -241,6 +241,12 @@ download_directory() {
 check_git_updates() {
     log_info "リモートリポジトリの更新をチェックしています..."
     
+    # curlパイプ実行時はスキップ
+    if [[ "$EXECUTION_MODE" == "curl" ]]; then
+        log_info "リモート実行のため更新チェックをスキップします"
+        return 0
+    fi
+    
     cd "$PROJECT_ROOT"
     
     # リモートリポジトリの最新情報を取得
@@ -320,6 +326,12 @@ detect_custom_files() {
 # 変更ファイル差分表示
 show_changes() {
     log_info "変更内容を確認しています..."
+    
+    # curlパイプ実行時はスキップ
+    if [[ "$EXECUTION_MODE" == "curl" ]]; then
+        log_info "リモート実行のため変更内容表示をスキップします"
+        return 0
+    fi
     
     cd "$PROJECT_ROOT"
     
@@ -467,7 +479,10 @@ selective_update() {
 
 # ファイル更新実行
 update_files() {
-    local custom_files=($1)
+    local custom_files=()
+    if [[ -n "$1" ]]; then
+        custom_files=($1)
+    fi
     
     log_info "ファイルを更新しています..."
     
@@ -492,7 +507,7 @@ update_files() {
         
         for file in "${update_files[@]}"; do
             # カスタマイズファイルはスキップ
-            if [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
+            if [[ ${#custom_files[@]} -gt 0 ]] && [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
                 log_warning "スキップ (カスタマイズ済み): $file"
                 continue
             fi
@@ -526,7 +541,7 @@ update_files() {
             current=$((current + 1))
             
             # カスタマイズファイルはスキップ
-            if [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
+            if [[ ${#custom_files[@]} -gt 0 ]] && [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
                 log_warning "[$current/$total_files] スキップ (カスタマイズ済み): $file"
                 continue
             fi
@@ -737,13 +752,8 @@ main() {
     else
         # curlパイプ実行時: シンプルな更新プロセス
         log_info "リモート実行では強制的に全ファイルを更新します"
+        log_info "確認プロンプトをスキップして自動実行します"
         echo
-        
-        read -p "更新を実行しますか？ (y/n): " confirm
-        if [[ ! "$confirm" =~ ^[Yy] ]]; then
-            log_info "更新をキャンセルしました"
-            exit 0
-        fi
         
         # バックアップ作成
         create_backup
@@ -759,7 +769,11 @@ main() {
         fi
         
         # GitHubから直接更新
-        update_files "${custom_files[*]}"
+        if [[ ${#custom_files[@]} -gt 0 ]]; then
+            update_files "${custom_files[*]}"
+        else
+            update_files ""
+        fi
     fi
     
     # バージョン情報更新
