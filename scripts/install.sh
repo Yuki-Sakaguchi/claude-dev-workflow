@@ -23,8 +23,8 @@ readonly TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 readonly GITHUB_REPO="https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main"
 
 # 実行環境判定（ローカル実行 vs curlパイプ実行）
-if [[ -n "${BASH_SOURCE[0]:-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
-    # curlパイプ実行
+if [[ "${0}" =~ ^/dev/fd/ ]] || [[ "${0}" == "bash" ]] || [[ -z "${BASH_SOURCE[0]:-}" ]]; then
+    # curlパイプ実行（stdin経由）
     readonly EXECUTION_MODE="curl"
     readonly SCRIPT_DIR=""
     readonly PROJECT_ROOT=""
@@ -318,6 +318,15 @@ EOF
 # メイン実行
 main() {
     log_header "🚀 Claude Dev Workflow セットアップ開始"
+    echo
+    
+    # 実行環境の情報表示
+    log_info "実行環境: $EXECUTION_MODE"
+    if [[ "$EXECUTION_MODE" == "curl" ]]; then
+        log_info "GitHubからファイルをダウンロードします"
+    else
+        log_info "ローカルファイルからコピーします"
+    fi
     echo
     
     # 事前チェック
