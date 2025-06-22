@@ -28,6 +28,8 @@ Claude Codeとの協働で個人開発を3-5倍効率化するためのガイド
 curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/install.sh | bash
 ```
 
+その他のアップデートコマンドは [scripts - README.md](scripts/README.md)
+
 ### 📂 インストール後の構成
 
 既存のファイルは変更しません。  
@@ -55,6 +57,9 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 ガイドラインを読み込みました。今後このガイドラインに従って動作します。
 利用可能なコマンド: /start-project, /implement, /auto-review など
 ```
+
+## 使えるコマンド一覧
+[commands - README.md](commands/README.md)
 
 ## 🚀 開発スタート
 
@@ -84,27 +89,6 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 /competitor-analysis Notion          # 競合分析
 /analyze-codebase                    # コードベース分析
 ```
-
-## 利用可能なコマンド一覧
-
-### 🚀 開発フロー
-- `/start-project` - プロジェクト開始・要件定義
-- `/setup-automation` - 環境構築・自動化設定
-- `/create-issues` - GitHub Issue作成
-- `/implement` - 機能実装（TDD自動実行）
-- `/fix-bug` - バグ修正
-- `/review-ready` - リリース前品質チェック
-- `/auto-review` - 自動コードレビュー
-- `/update-docs` - ドキュメント更新
-
-### 🔍 調査・分析
-- `/research` - 一般調査（市場・技術・可能性調査）
-- `/tech-research` - 技術比較調査
-- `/competitor-analysis` - 競合分析
-- `/analyze-codebase` - コードベース分析
-
-### 🔧 PRレビュー対応
-- `/pr-review` - PRレビューコメント自動対応（取得・分析・修正実行）
 
 ## トラブルシューティング
 
