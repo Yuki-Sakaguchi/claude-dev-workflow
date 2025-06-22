@@ -418,11 +418,4 @@ main() {
 }
 
 # スクリプト実行
-# HTTPS経由実行時の引数対応
-if [[ -n "${BACKUP_COMMAND:-}" ]]; then
-    # 環境変数が設定されている場合（HTTPS経由実行）
-    main "$BACKUP_COMMAND" "${BACKUP_ARG:-}"
-else
-    # 通常実行の場合
-    main "$@"
-fi
+main "$@"
