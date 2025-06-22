@@ -418,4 +418,15 @@ main() {
 }
 
 # スクリプト実行
-main "$@"
+# HTTPS経由実行時の引数対応
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    # 直接実行の場合
+    main "$@"
+else
+    # curl | bash 実行の場合、環境変数から引数を取得
+    if [[ -n "${BACKUP_COMMAND:-}" ]]; then
+        main "$BACKUP_COMMAND" "${BACKUP_ARG:-}"
+    else
+        main "$@"
+    fi
+fi
