@@ -26,14 +26,14 @@ Claude Codeとの協働で個人開発を3-5倍効率化するためのガイド
 
 ```bash
 # このリポジトリをクローンしてインストール
-git clone https://github.com/Yuki-Sakaguchi/claude-code-template.git
-cd claude-code-template
+git clone https://github.com/Yuki-Sakaguchi/claude-dev-workflow.git
+cd claude-dev-workflow
 ./scripts/install.sh
 ```
 
 **または直接実行**:
 ```bash
-curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-code-template/main/scripts/install.sh | bash
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/install.sh | bash
 ```
 
 ### 📁 手動インストール

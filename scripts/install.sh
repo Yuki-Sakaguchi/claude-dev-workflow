@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #
-# Claude Code Template インストールスクリプト
+# Claude Dev Workflow インストールスクリプト
 # 
 # 使用方法:
 #   ./scripts/install.sh
 #   curl -s <URL>/install.sh | bash
 #
 # 機能:
-#   - ~/.claude/ ディレクトリに Claude Code Template を設置
+#   - ~/.claude/ ディレクトリに Claude Dev Workflow を設置
 #   - 既存ファイルの自動バックアップ
 #   - 権限チェックとエラーハンドリング
 #   - 進捗表示とユーザーフィードバック
@@ -88,7 +88,7 @@ check_permissions() {
 # 既存インストールの検出とバックアップ
 backup_existing() {
     if [[ -d "$CLAUDE_DIR" ]]; then
-        log_warning "既存の Claude Code Template が検出されました"
+        log_warning "既存の Claude Dev Workflow が検出されました"
         log_info "バックアップを作成しています..."
         
         local backup_path="${BACKUP_PREFIX}.${TIMESTAMP}"
@@ -178,7 +178,7 @@ verify_installation() {
 # 使用方法の表示
 show_usage() {
     echo
-    log_header "🎉 Claude Code Template のセットアップが完了しました！"
+    log_header "🎉 Claude Dev Workflow のセットアップが完了しました！"
     echo
     echo "📍 インストール場所: $CLAUDE_DIR"
     echo
@@ -224,7 +224,7 @@ EOF
 
 # メイン実行
 main() {
-    log_header "🚀 Claude Code Template セットアップ開始"
+    log_header "🚀 Claude Dev Workflow セットアップ開始"
     echo
     
     # 事前チェック

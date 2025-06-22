@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Claude Code Template 更新スクリプト
+# Claude Dev Workflow 更新スクリプト
 # 
 # 使用方法:
 #   ./scripts/update.sh
@@ -143,7 +143,7 @@ detect_custom_files() {
     # カスタムファイルリストを更新
     if [[ ${#custom_files[@]} -gt 0 ]]; then
         {
-            echo "# Claude Code Template - カスタマイズファイル一覧"
+            echo "# Claude Dev Workflow - カスタマイズファイル一覧"
             echo "# $(date)"
             echo "#"
             for file in "${custom_files[@]}"; do
@@ -463,7 +463,7 @@ rollback() {
 # 更新完了レポート
 show_update_report() {
     echo
-    log_header "🎉 Claude Code Template の更新が完了しました！"
+    log_header "🎉 Claude Dev Workflow の更新が完了しました！"
     echo
     echo "📍 更新場所: $CLAUDE_DIR"
     echo "📊 現在のバージョン: $(get_current_version)"
@@ -495,7 +495,7 @@ main() {
         exit $?
     fi
     
-    log_header "🔄 Claude Code Template 更新開始"
+    log_header "🔄 Claude Dev Workflow 更新開始"
     echo
     
     # 現在のバージョン表示
