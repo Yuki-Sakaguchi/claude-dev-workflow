@@ -20,7 +20,7 @@ set -euo pipefail
 
 # 設定
 readonly CLAUDE_DIR="$HOME/.claude"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 readonly BACKUP_PREFIX="$HOME/.claude.backup"
 readonly TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
@@ -78,6 +78,25 @@ get_current_version() {
     fi
 }
 
+# プロジェクトのファイル一覧を動的に取得
+get_project_files() {
+    local files=()
+    
+    # CLAUDE.md
+    if [[ -f "$PROJECT_ROOT/CLAUDE.md" ]]; then
+        files+=("CLAUDE.md")
+    fi
+    
+    # ディレクトリ一覧を動的に取得
+    for dir in commands requirements workflow templates docs; do
+        if [[ -d "$PROJECT_ROOT/$dir" ]]; then
+            files+=("$dir")
+        fi
+    done
+    
+    printf '%s\n' "${files[@]}"
+}
+
 # Git最新化チェック
 check_git_updates() {
     log_info "リモートリポジトリの更新をチェックしています..."
@@ -117,15 +136,11 @@ detect_custom_files() {
         done < "$CUSTOM_FILES_LIST"
     fi
     
-    # プロジェクトルートの既存ファイルとの差分チェック
-    local project_files=(
-        "CLAUDE.md"
-        "commands"
-        "requirements"
-        "workflow"
-        "templates"
-        "docs"
-    )
+    # プロジェクトルートの既存ファイルとの差分チェック（動的取得）
+    local project_files=()
+    while IFS= read -r file; do
+        project_files+=("$file")
+    done < <(get_project_files)
     
     for file in "${project_files[@]}"; do
         local claude_file="$CLAUDE_DIR/$file"
@@ -325,15 +340,11 @@ update_files() {
         error_exit "Gitリポジトリの更新に失敗しました"
     fi
     
-    # Claude dirへのファイルコピー
-    local update_files=(
-        "CLAUDE.md"
-        "commands"
-        "requirements"
-        "workflow"
-        "templates"
-        "docs"
-    )
+    # Claude dirへのファイルコピー（動的取得）
+    local update_files=()
+    while IFS= read -r file; do
+        update_files+=("$file")
+    done < <(get_project_files)
     
     local updated_count=0
     
@@ -536,6 +547,6 @@ main() {
 }
 
 # スクリプト実行
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ "${BASH_SOURCE[0]:-$0}" == "${0}" ]]; then
     main "$@"
 fi
