@@ -92,57 +92,66 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 /analyze-codebase                    # コードベース分析
 ```
 
-## 🔧 バージョン管理・メンテナンス
+## 🛡️ 設定カスタマイズ保護
 
-### バージョン確認
+### カスタマイズ検出と管理
 ```bash
-# 現在のバージョン確認
-./scripts/version.sh --version
+# カスタマイズファイルの初期化
+./scripts/config-protection.sh --init
 
-# 詳細なバージョン情報表示
-./scripts/version.sh --show
+# カスタマイズ一覧表示
+./scripts/config-protection.sh --list
 
-# バージョン履歴確認
-./scripts/version.sh --history
+# 特定ファイルのカスタマイズ検出
+./scripts/config-protection.sh --detect CLAUDE.md
 ```
 
-### 互換性チェック
+### インテリジェントマージ
 ```bash
-# 互換性チェック実行
-./scripts/check-compatibility.sh --check
+# スマートマージ実行
+./scripts/config-merge.sh --smart current.md new.md merged.md
 
-# 問題の自動修復
-./scripts/check-compatibility.sh --fix
+# Markdownセクション別マージ
+./scripts/config-merge.sh --markdown current.md new.md merged.md
 
-# マイグレーションガイド表示
-./scripts/check-compatibility.sh --migration
+# JSON設定のキー別マージ
+./scripts/config-merge.sh --json settings.json new_settings.json merged.json
+
+# マージプレビュー表示
+./scripts/config-merge.sh --preview current.md new.md merged.md
 ```
 
-### アップデート
+### カスタマイズ履歴管理
 ```bash
-# Claude Dev Workflowを最新版に更新
-./scripts/update.sh
+# 履歴表示
+./scripts/customization-history.sh --show
 
-# 更新前のロールバック（問題がある場合）
-./scripts/update.sh --rollback
+# 特定ファイルの履歴
+./scripts/customization-history.sh --file CLAUDE.md
+
+# 履歴統計情報
+./scripts/customization-history.sh --stats
+
+# 履歴検索
+./scripts/customization-history.sh --search "merge"
+
+# 履歴エクスポート
+./scripts/customization-history.sh --export history.csv csv
 ```
 
-### バックアップ
+### カスタマイズ復元
 ```bash
-# 手動バックアップ作成
-./scripts/backup.sh --create
+# バックアップから復元
+./scripts/config-protection.sh --restore CLAUDE.md
 
-# バックアップ一覧表示
-./scripts/backup.sh --list
-
-# 指定バックアップからの復元
-./scripts/backup.sh --restore backup_20240624_120000
+# 古いバックアップクリーンアップ
+./scripts/config-protection.sh --cleanup 30
 ```
 
 ### テスト実行
 ```bash
-# バージョン管理機能のテスト
-./scripts/test-version.sh
+# 設定保護機能のテスト
+./scripts/test-config-protection.sh
 ```
 
 ## ⚠️ トラブルシューティング

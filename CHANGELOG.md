@@ -8,17 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- バージョン管理機能（#4）
-  - `.claude-version` ファイルによるセマンティックバージョニング対応
-  - `scripts/version.sh` - バージョン情報表示とチェック機能
-  - `scripts/check-compatibility.sh` - 互換性チェックとマイグレーション支援
-  - バージョン比較機能（セマンティックバージョニング準拠）
-  - バージョン履歴表示機能
-  - 破壊的変更の事前通知機能
-  - マイグレーション要否判定機能
-  - 自動修復機能
+- 設定カスタマイズ保護機能（#5）
+  - `scripts/config-protection.sh` - カスタマイズファイル検出と保護
+  - `scripts/config-merge.sh` - インテリジェントファイルマージ
+  - `scripts/customization-history.sh` - カスタマイズ履歴管理
+  - ファイルハッシュベースのカスタマイズ検出
+  - Markdown/JSON/テキストファイルの専用マージ機能
+  - 三方向マージによる競合解決
+  - インタラクティブな競合解決インターフェース
+  - カスタマイズ履歴の記録と可視化
+  - 自動バックアップとロールバック機能
 - テスト機能
-  - `scripts/test-version.sh` - バージョン管理機能のテストスイート
+  - `scripts/test-config-protection.sh` - 設定保護機能のテストスイート
 - バックアップ管理スクリプト `scripts/backup.sh`
   - タイムスタンプ付きバックアップ作成
   - バックアップ一覧表示機能
@@ -28,16 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - macOS環境対応
 
 ### Changed
-- `scripts/install.sh` にバージョン管理機能を統合
-- `scripts/update.sh` にバージョン比較とマイグレーション機能を追加
-- `.claude-version` ファイル形式の拡張（互換性情報、機能リスト、破壊的変更記録）
+- `scripts/install.sh` に設定保護機能の初期化を追加
+- `scripts/update.sh` にインテリジェントマージ機能を統合
+- アップデート時のカスタマイズファイル処理を高度化
 - README.md にバックアップ管理セクションを追加
-- ファイル数統計を36個から40個に更新
+- ファイル数統計を37個から44個に更新
 
 ### Enhanced
-- バージョンアップ時の自動互換性チェック
-- インストール・更新プロセスでのバージョン整合性確認
-- Git タグと連携したバージョン自動取得
+- アップデート時のユーザーカスタマイズ自動保護
+- セクション別・キー別のインテリジェントマージ
+- カスタマイズ競合の自動検出と解決支援
+- 設定変更の履歴追跡とロールバック対応
 
 ## [1.1.0] - 2024-06-22
 

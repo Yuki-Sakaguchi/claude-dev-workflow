@@ -368,12 +368,25 @@ show_usage() {
     fi
 }
 
-# バージョン管理機能の読み込み
-source_version_tools() {
-    # 新しいバージョンツールが利用可能な場合のみ読み込み
-    if [[ -f "$CLAUDE_DIR/scripts/version.sh" ]]; then
-        source "$CLAUDE_DIR/scripts/version.sh"
-        log_info "バージョン管理ツールを読み込みました"
+# 設定保護機能の初期化
+init_config_protection() {
+    log_info "設定保護機能を初期化中..."
+    
+    # 設定保護スクリプトが利用可能な場合のみ初期化
+    if [[ -f "$CLAUDE_DIR/scripts/config-protection.sh" ]]; then
+        source "$CLAUDE_DIR/scripts/config-protection.sh"
+        
+        # カスタマイズ管理の初期化
+        init_customization_file 2>/dev/null || true
+        
+        # 履歴管理の初期化
+        if [[ -f "$CLAUDE_DIR/scripts/customization-history.sh" ]]; then
+            "$CLAUDE_DIR/scripts/customization-history.sh" --add "installation" "initial_setup" "Initial installation completed" 2>/dev/null || true
+        fi
+        
+        log_success "設定保護機能の初期化完了"
+    else
+        log_info "設定保護機能は後の更新で利用可能になります"
     fi
 }
 
@@ -447,6 +460,9 @@ main() {
     
     # バージョン情報作成
     create_version_info
+    
+    # 設定保護機能の初期化
+    init_config_protection
     
     # インストール検証
     verify_installation
