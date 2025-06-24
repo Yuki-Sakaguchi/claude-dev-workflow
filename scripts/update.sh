@@ -81,6 +81,21 @@ cleanup() {
 }
 trap cleanup INT
 
+# 設定保護機能の読み込み
+source_config_protection() {
+    # 設定保護ツールが利用可能な場合のみ読み込み
+    if [[ -f "$CLAUDE_DIR/scripts/config-protection.sh" ]]; then
+        source "$CLAUDE_DIR/scripts/config-protection.sh"
+        log_info "設定保護ツールを読み込みました"
+        return 0
+    elif [[ -f "$SCRIPT_DIR/config-protection.sh" ]]; then
+        source "$SCRIPT_DIR/config-protection.sh"
+        log_info "設定保護ツールを読み込みました (ローカル)"
+        return 0
+    fi
+    return 1
+}
+
 # 現在のバージョン確認
 get_current_version() {
     if [[ -f "$VERSION_FILE" ]]; then
@@ -272,17 +287,32 @@ check_git_updates() {
     fi
 }
 
-# カスタマイズファイル検出
+# カスタマイズファイル検出（設定保護機能使用）
 detect_custom_files() {
     log_info "ローカルカスタマイズを検出しています..."
     
     local custom_files=()
     
-    # 既存のカスタムファイルリストを読み込み
+    # 設定保護機能を使用してカスタマイズ検出
+    if source_config_protection; then
+        # 設定保護機能を初期化
+        init_customization_file 2>/dev/null || true
+        
+        # カスタマイズファイル一覧を取得
+        if [[ -f "$CLAUDE_DIR/.customizations.json" ]] && command -v jq >/dev/null 2>&1; then
+            while IFS= read -r file; do
+                [[ -n "$file" ]] && custom_files+=("$file")
+            done < <(jq -r '.customizations[].file' "$CLAUDE_DIR/.customizations.json" 2>/dev/null)
+        fi
+    fi
+    
+    # 既存のカスタムファイルリストを読み込み（フォールバック）
     if [[ -f "$CUSTOM_FILES_LIST" ]]; then
         while IFS= read -r line; do
             if [[ -n "$line" && ! "$line" =~ ^# ]]; then
-                custom_files+=("$line")
+                if [[ ! " ${custom_files[*]} " =~ " ${line} " ]]; then
+                    custom_files+=("$line")
+                fi
             fi
         done < "$CUSTOM_FILES_LIST"
     fi
@@ -301,6 +331,11 @@ detect_custom_files() {
             if ! diff -q "$claude_file" "$project_file" &>/dev/null; then
                 if [[ ! " ${custom_files[*]} " =~ " ${file} " ]]; then
                     custom_files+=("$file")
+                    
+                    # 設定保護機能でカスタマイズを記録
+                    if command -v record_customization >/dev/null 2>&1; then
+                        record_customization "$claude_file" "$file" "detected" "update_process_detection" 2>/dev/null || true
+                    fi
                 fi
             fi
         fi
@@ -511,16 +546,46 @@ update_files() {
         local updated_count=0
         
         for file in "${update_files[@]}"; do
-            # カスタマイズファイルはスキップ
-            if [[ ${#custom_files[@]} -gt 0 ]] && [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
-                log_warning "スキップ (カスタマイズ済み): $file"
-                continue
-            fi
-            
             local source_path="$PROJECT_ROOT/$file"
             local dest_path="$CLAUDE_DIR/$file"
             
-            if [[ -e "$source_path" ]]; then
+            if [[ ! -e "$source_path" ]]; then
+                continue
+            fi
+            
+            # カスタマイズファイルの場合は設定保護機能でマージ
+            if [[ ${#custom_files[@]} -gt 0 ]] && [[ " ${custom_files[*]} " =~ " ${file} " ]]; then
+                log_info "カスタマイズファイルのマージ処理: $file"
+                
+                # 設定保護機能を使用してマージ
+                if command -v merge_configuration_file >/dev/null 2>&1; then
+                    if merge_configuration_file "$dest_path" "$source_path" "$file" 2>/dev/null; then
+                        log_success "インテリジェントマージ完了: $file"
+                        updated_count=$((updated_count + 1))
+                    else
+                        log_warning "マージ処理をスキップ: $file"
+                    fi
+                elif [[ -f "$SCRIPT_DIR/config-merge.sh" ]]; then
+                    # config-merge.shを使用してスマートマージ
+                    local temp_merged=$(mktemp)
+                    if "$SCRIPT_DIR/config-merge.sh" --smart "$dest_path" "$source_path" "$temp_merged" 2>/dev/null; then
+                        mv "$temp_merged" "$dest_path"
+                        log_success "スマートマージ完了: $file"
+                        updated_count=$((updated_count + 1))
+                        
+                        # 履歴記録
+                        if [[ -f "$SCRIPT_DIR/customization-history.sh" ]]; then
+                            "$SCRIPT_DIR/customization-history.sh" --add "$dest_path" "smart_merge" "Update merge with customization preservation" 2>/dev/null || true
+                        fi
+                    else
+                        log_warning "スマートマージ失敗、スキップ: $file"
+                        rm -f "$temp_merged"
+                    fi
+                else
+                    log_warning "マージ機能が利用できません、スキップ: $file"
+                fi
+            else
+                # 通常ファイルの場合は直接更新
                 if rsync -a "$source_path" "$CLAUDE_DIR/"; then
                     log_success "更新完了: $file"
                     updated_count=$((updated_count + 1))

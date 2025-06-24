@@ -92,6 +92,68 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 /analyze-codebase                    # コードベース分析
 ```
 
+## 🛡️ 設定カスタマイズ保護
+
+### カスタマイズ検出と管理
+```bash
+# カスタマイズファイルの初期化
+./scripts/config-protection.sh --init
+
+# カスタマイズ一覧表示
+./scripts/config-protection.sh --list
+
+# 特定ファイルのカスタマイズ検出
+./scripts/config-protection.sh --detect CLAUDE.md
+```
+
+### インテリジェントマージ
+```bash
+# スマートマージ実行
+./scripts/config-merge.sh --smart current.md new.md merged.md
+
+# Markdownセクション別マージ
+./scripts/config-merge.sh --markdown current.md new.md merged.md
+
+# JSON設定のキー別マージ
+./scripts/config-merge.sh --json settings.json new_settings.json merged.json
+
+# マージプレビュー表示
+./scripts/config-merge.sh --preview current.md new.md merged.md
+```
+
+### カスタマイズ履歴管理
+```bash
+# 履歴表示
+./scripts/customization-history.sh --show
+
+# 特定ファイルの履歴
+./scripts/customization-history.sh --file CLAUDE.md
+
+# 履歴統計情報
+./scripts/customization-history.sh --stats
+
+# 履歴検索
+./scripts/customization-history.sh --search "merge"
+
+# 履歴エクスポート
+./scripts/customization-history.sh --export history.csv csv
+```
+
+### カスタマイズ復元
+```bash
+# バックアップから復元
+./scripts/config-protection.sh --restore CLAUDE.md
+
+# 古いバックアップクリーンアップ
+./scripts/config-protection.sh --cleanup 30
+```
+
+### テスト実行
+```bash
+# 設定保護機能のテスト
+./scripts/test-config-protection.sh
+```
+
 ## ⚠️ トラブルシューティング
 
 ### Claude Codeが期待通りに動作しない
