@@ -99,6 +99,13 @@ create_backup() {
     local backup_file="$BACKUP_DIR/${BACKUP_PREFIX}_${TIMESTAMP}.tar.gz"
     
     log_info "バックアップ対象: $CLAUDE_DIR"
+    log_info "  - CLAUDE.md（メインガイド）"
+    log_info "  - settings.json（Claude Code設定）"
+    log_info "  - commands/（カスタムコマンド）"
+    log_info "  - requirements/（要件定義）"
+    log_info "  - workflow/（開発フロー）"
+    log_info "  - templates/（テンプレート）"
+    log_info "  - scripts/（管理スクリプト）"
     log_info "バックアップファイル: $backup_file"
     
     # 一時的な作業ディレクトリでバックアップを作成

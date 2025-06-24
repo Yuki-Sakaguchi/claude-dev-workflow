@@ -258,6 +258,7 @@ copy_files() {
     # コピー対象の確認
     local source_files=(
         "CLAUDE.md"
+        "settings.json"
         "commands"
         "requirements" 
         "workflow"
@@ -293,7 +294,7 @@ copy_files() {
             current=$((current + 1))
             log_info "[$current/$total_files] ダウンロード中: $file"
             
-            if [[ "$file" == "CLAUDE.md" ]]; then
+            if [[ "$file" == "CLAUDE.md" ]] || [[ "$file" == "settings.json" ]]; then
                 # 単一ファイルの場合
                 local dest_path="$CLAUDE_DIR/$file"
                 if download_from_github "$file" "$dest_path"; then
@@ -320,6 +321,7 @@ verify_installation() {
     # 必須ファイルの存在確認
     local required_files=(
         "$CLAUDE_DIR/CLAUDE.md"
+        "$CLAUDE_DIR/settings.json"
         "$CLAUDE_DIR/commands"
         "$CLAUDE_DIR/templates"
         "$CLAUDE_DIR/workflow"
