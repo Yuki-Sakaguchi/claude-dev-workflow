@@ -81,10 +81,25 @@ cleanup() {
 }
 trap cleanup INT
 
+# バージョン管理機能の読み込み
+source_version_tools() {
+    # 新しいバージョンツールが利用可能な場合のみ読み込み
+    if [[ -f "$CLAUDE_DIR/scripts/version.sh" ]]; then
+        source "$CLAUDE_DIR/scripts/version.sh"
+        log_info "バージョン管理ツールを読み込みました"
+        return 0
+    fi
+    return 1
+}
+
 # 現在のバージョン確認
 get_current_version() {
     if [[ -f "$VERSION_FILE" ]]; then
-        grep '"version"' "$VERSION_FILE" | sed 's/.*"version": "\(.*\)".*/\1/'
+        if command -v jq >/dev/null 2>&1; then
+            jq -r '.version' "$VERSION_FILE" 2>/dev/null || echo "unknown"
+        else
+            grep '"version"' "$VERSION_FILE" | sed 's/.*"version": "\(.*\)".*/\1/' || echo "unknown"
+        fi
     else
         echo "unknown"
     fi
@@ -618,28 +633,70 @@ update_selected_files() {
     done
 }
 
+# 新しいバージョンを取得（Git tagから）
+get_latest_version() {
+    local latest_version="1.0.1"  # デフォルト値
+    
+    if [[ "$EXECUTION_MODE" == "local" ]] && command -v git >/dev/null 2>&1; then
+        cd "$PROJECT_ROOT"
+        # 最新のGitタグを取得
+        local git_version=$(git describe --tags --abbrev=0 2>/dev/null)
+        if [[ -n "$git_version" ]]; then
+            latest_version="$git_version"
+        fi
+    fi
+    
+    echo "$latest_version"
+}
+
 # バージョン情報更新
 update_version_info() {
     log_info "バージョン情報を更新しています..."
     
-    local new_version="1.0.1" # TODO: Gitタグから取得
+    local current_version=$(get_current_version)
+    local new_version=$(get_latest_version)
+    
+    # バージョン比較機能を使用（利用可能な場合）
+    if source_version_tools && command -v compare_versions >/dev/null 2>&1; then
+        compare_versions "$current_version" "$new_version"
+        local comparison_result=$?
+        
+        if [[ $comparison_result -eq 0 ]]; then
+            log_info "バージョンに変更はありません: $current_version"
+        elif [[ $comparison_result -eq 2 ]]; then
+            log_info "バージョンアップ: $current_version → $new_version"
+        fi
+    fi
+    
+    # 既存のバージョンファイルから互換性情報を保持
+    local compatibility="1.0.0"
+    local features='["research", "automation", "templates", "workflow", "commands"]'
+    local breaking_changes='[]'
+    local migration_required="false"
+    
+    if [[ -f "$VERSION_FILE" ]] && command -v jq >/dev/null 2>&1; then
+        compatibility=$(jq -r '.compatibility // "1.0.0"' "$VERSION_FILE")
+        features=$(jq -c '.features // ["research", "automation", "templates", "workflow", "commands"]' "$VERSION_FILE")
+        breaking_changes=$(jq -c '.breaking_changes // []' "$VERSION_FILE")
+        migration_required=$(jq -r '.migration_required // false' "$VERSION_FILE")
+    fi
     
     cat > "$VERSION_FILE" << EOF
 {
   "version": "$new_version",
-  "updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "compatibility": "$compatibility",
+  "last_updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "features": $features,
+  "breaking_changes": $breaking_changes,
+  "migration_required": $migration_required,
   "updater": "update.sh",
+  "previous_version": "$current_version",
   "previous_backup": "$(cat "$CLAUDE_DIR/.last-backup" 2>/dev/null || echo "")",
-  "features": [
-    "research",
-    "automation", 
-    "supabase",
-    "static-analysis"
-  ]
+  "description": "Updated via update.sh"
 }
 EOF
     
-    log_success "バージョン情報を更新しました"
+    log_success "バージョン情報を更新しました: $current_version → $new_version"
 }
 
 # ロールバック機能
@@ -783,6 +840,16 @@ main() {
     
     # バージョン情報更新
     update_version_info
+    
+    # 更新後の互換性チェック
+    if [[ -f "$CLAUDE_DIR/scripts/check-compatibility.sh" ]]; then
+        log_info "更新後の互換性チェックを実行中..."
+        if "$CLAUDE_DIR/scripts/check-compatibility.sh" --check; then
+            log_success "互換性チェック完了"
+        else
+            log_warning "互換性チェックで問題が検出されました"
+        fi
+    fi
     
     # 完了レポート
     show_update_report

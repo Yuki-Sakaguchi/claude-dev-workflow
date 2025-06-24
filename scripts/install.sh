@@ -368,6 +368,15 @@ show_usage() {
     fi
 }
 
+# バージョン管理機能の読み込み
+source_version_tools() {
+    # 新しいバージョンツールが利用可能な場合のみ読み込み
+    if [[ -f "$CLAUDE_DIR/scripts/version.sh" ]]; then
+        source "$CLAUDE_DIR/scripts/version.sh"
+        log_info "バージョン管理ツールを読み込みました"
+    fi
+}
+
 # バージョン情報作成
 create_version_info() {
     local version_file="$CLAUDE_DIR/.claude-version"
@@ -375,18 +384,42 @@ create_version_info() {
     cat > "$version_file" << EOF
 {
   "version": "1.0.0",
-  "installed": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "compatibility": "1.0.0",
+  "last_updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "features": ["research", "automation", "templates", "workflow", "commands"],
+  "breaking_changes": [],
+  "migration_required": false,
   "installer": "install.sh",
-  "features": [
-    "research",
-    "automation", 
-    "supabase",
-    "static-analysis"
-  ]
+  "description": "Initial installation with comprehensive development workflow"
 }
 EOF
     
     log_success "バージョン情報を作成しました"
+}
+
+# インストール後のバージョン確認
+verify_version() {
+    log_info "バージョン管理機能の動作確認中..."
+    
+    # バージョンツールを読み込み
+    source_version_tools
+    
+    # バージョン情報の表示
+    if command -v show_version >/dev/null 2>&1; then
+        show_version
+    else
+        log_warning "バージョン管理機能が利用できません"
+    fi
+    
+    # 互換性チェックの実行
+    if [[ -f "$CLAUDE_DIR/scripts/check-compatibility.sh" ]]; then
+        log_info "互換性チェックを実行中..."
+        if "$CLAUDE_DIR/scripts/check-compatibility.sh" --check; then
+            log_success "互換性チェック完了"
+        else
+            log_warning "互換性チェックで問題が検出されました"
+        fi
+    fi
 }
 
 # メイン実行
@@ -417,6 +450,9 @@ main() {
     
     # インストール検証
     verify_installation
+    
+    # バージョン管理機能の確認
+    verify_version
     
     # 使用方法表示
     show_usage
