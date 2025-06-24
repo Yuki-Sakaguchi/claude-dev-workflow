@@ -1,9 +1,0 @@
-{
-  "version": "1.0.0",
-  "compatibility": "1.0.0",
-  "last_updated": "2024-06-24T00:00:00Z",
-  "features": ["research", "automation", "templates", "workflow", "commands"],
-  "breaking_changes": [],
-  "migration_required": false,
-  "description": "Initial release with comprehensive development workflow templates and automation"
-}
