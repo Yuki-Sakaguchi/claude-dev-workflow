@@ -35,6 +35,7 @@ curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/mai
 ~/.claude/
 ├── .claude-version              # バージョン情報
 ├── CLAUDE.md                    # メインガイド
+├── settings.json                # Claude Code設定ファイル
 ├── commands/                    # カスタムスラッシュコマンド
 ├── requirements/                # 要件定義関連
 ├── workflow/                    # 開発ワークフロー

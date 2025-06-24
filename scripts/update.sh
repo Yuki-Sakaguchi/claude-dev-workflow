@@ -101,6 +101,11 @@ get_project_files() {
             files+=("CLAUDE.md")
         fi
         
+        # settings.json
+        if [[ -f "$PROJECT_ROOT/settings.json" ]]; then
+            files+=("settings.json")
+        fi
+        
         # ディレクトリ一覧を動的に取得
         for dir in commands requirements workflow templates docs scripts; do
             if [[ -d "$PROJECT_ROOT/$dir" ]]; then
@@ -109,7 +114,7 @@ get_project_files() {
         done
     else
         # curlパイプ実行時は固定リスト
-        files=("CLAUDE.md" "commands" "requirements" "workflow" "templates" "docs" "scripts")
+        files=("CLAUDE.md" "settings.json" "commands" "requirements" "workflow" "templates" "docs" "scripts")
     fi
     
     printf '%s\n' "${files[@]}"
@@ -548,7 +553,7 @@ update_files() {
             
             log_info "[$current/$total_files] 更新中: $file"
             
-            if [[ "$file" == "CLAUDE.md" ]]; then
+            if [[ "$file" == "CLAUDE.md" ]] || [[ "$file" == "settings.json" ]]; then
                 # 単一ファイルの場合
                 local dest_path="$CLAUDE_DIR/$file"
                 if download_from_github "$file" "$dest_path"; then
