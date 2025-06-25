@@ -189,7 +189,7 @@ npm run db:start
 npm install @supabase/supabase-js @supabase/auth-ui-react @supabase/auth-ui-shared
 ```
 
-**詳細設定**: `templates/supabase-setup.md` を参照
+**詳細設定**: templates/supabase-setup.md を参照
 
 #### Claude Code実行例
 ```bash

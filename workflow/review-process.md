@@ -14,9 +14,9 @@
 - **効率性**: 重要な問題に集中し、枝葉末節は避ける
 
 ### 既存ワークフローとの連携
-- `workflow/development-flow.md` の品質基準に準拠
-- `workflow/tdd-process.md` のテスト戦略と整合
-- `templates/pr-template.md` の情報を活用
+- workflow/development-flow.md の品質基準に準拠
+- workflow/tdd-process.md のテスト戦略と整合
+- templates/pr-template.md の情報を活用
 
 ## レビュー観点・チェック項目
 

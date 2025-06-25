@@ -46,7 +46,7 @@ curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/mai
 ### ガイドライン読み込み（重要！）
 Claude Codeに以下を指示してガイドラインを読み込ませてください：
 ```
-~/.claude/CLAUDE.md の内容を読み込んで、今後このガイドラインに従って動作してください
+CLAUDE.md の内容を読み込んで、今後このガイドラインに従って動作してください
 ```
 
 ### 動作確認
