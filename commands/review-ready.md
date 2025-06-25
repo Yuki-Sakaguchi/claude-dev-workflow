@@ -7,9 +7,9 @@ PR作成前の最終確認を実行します（例: "feature/login", "fix/auth-b
 
 以下のガイドラインに従って、PR作成前の最終確認を実行してください：
 
-- ~/.claude/workflow/development-flow.md（品質チェックポイント）
-- ~/.claude/workflow/tdd-process.md（テスト実行基準）
-- ~/.claude/templates/pr-template.md（PR作成テンプレート）
+- @workflow/development-flow.md（品質チェックポイント）
+- @workflow/tdd-process.md（テスト実行基準）
+- @templates/pr-template.md（PR作成テンプレート）
 
 確認項目：
 1. 全テスト通過確認（単体・統合・E2E、カバレッジ80%以上）

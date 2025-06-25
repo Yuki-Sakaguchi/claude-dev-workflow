@@ -7,9 +7,9 @@
 
 以下のガイドラインに従って、指定された技術・ツール・フレームワークの包括的な調査を実行してください：
 
-- ~/.claude/workflow/research-process.md（調査プロセス）
-- ~/.claude/workflow/analysis-methods.md（分析手法）
-- ~/.claude/templates/research-template.md（調査結果レポート形式）
+- @workflow/research-process.md（調査プロセス）
+- @workflow/analysis-methods.md（分析手法）
+- @templates/research-template.md（調査結果レポート形式）
 
 ## 技術調査手順
 
@@ -155,7 +155,7 @@ Threats: 新技術台頭、メンテナンス負荷
 
 ## 出力形式
 
-**必ず templates/research-output-template.md の構造に完全に従って結果を出力してください**
+**必ず @templates/research-output-template.md の構造に完全に従って結果を出力してください**
 
 技術調査結果は以下の構成で出力：
 

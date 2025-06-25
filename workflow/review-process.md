@@ -14,9 +14,9 @@
 - **効率性**: 重要な問題に集中し、枝葉末節は避ける
 
 ### 既存ワークフローとの連携
-- `workflow/development-flow.md` の品質基準に準拠
-- `workflow/tdd-process.md` のテスト戦略と整合
-- `templates/pr-template.md` の情報を活用
+- @workflow/development-flow.md の品質基準に準拠
+- @workflow/tdd-process.md のテスト戦略と整合
+- @templates/pr-template.md の情報を活用
 
 ## レビュー観点・チェック項目
 
@@ -119,7 +119,7 @@ function updateUser(userData) {
 - [ ] 環境変数が適切に使用されている
 - [ ] ログに機密情報が出力されていない
 
-### 4. テスト品質（~/.claude/workflow/tdd-process.md準拠）
+### 4. テスト品質（@workflow/tdd-process.md準拠）
 
 #### テスト網羅性
 **チェック項目**:

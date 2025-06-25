@@ -7,8 +7,8 @@
 
 要件定義書から体系的なGitHub Issueを作成してください：
 
-- ~/.claude/templates/issue-template.md（Issue作成テンプレート）
-- ~/.claude/requirements/document-structure.md（ドキュメント構造参照）
+- @templates/issue-template.md（Issue作成テンプレート）
+- @requirements/document-structure.md（ドキュメント構造参照）
 
 実行手順：
 1. 要件定義書の分析と機能分類
