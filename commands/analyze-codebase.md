@@ -7,9 +7,9 @@
 
 以下のガイドラインに従って、指定されたコードベースの包括的な分析を実行してください：
 
-- workflow/research-process.md（調査プロセス）
-- workflow/analysis-methods.md（分析手法）
-- templates/analysis-report.md（分析レポート形式）
+- @workflow/research-process.md（調査プロセス）
+- @workflow/analysis-methods.md（分析手法）
+- @templates/analysis-report.md（分析レポート形式）
 
 ## コードベース分析手順
 
@@ -114,7 +114,7 @@
 
 ## 出力形式
 
-**必ず templates/analysis-output-template.md の構造に完全に従って結果を出力してください**
+**必ず @templates/analysis-output-template.md の構造に完全に従って結果を出力してください**
 
 分析結果は以下の構成で出力：
 
