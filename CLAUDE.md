@@ -279,17 +279,17 @@ issue #15 の決済処理機能を実装してください。
 ## 📚 参考資料・外部リンク
 
 ### 開発手法
-- **Test-Driven Development** (@https://martinfowler.com/bliki/TestDrivenDevelopment.html)
-- **Conventional Commits** (@https://www.conventionalcommits.org/)
-- **Git Flow** (@https://nvie.com/posts/a-successful-git-branching-model/)
+- [Test-Driven Development](https://martinfowler.com/bliki/TestDrivenDevelopment.html)
+- [Conventional Commits](https://www.conventionalcommits.org/)
+- [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/)
 
 ### ツール・ライブラリ
-- **Vitest** (@https://vitest.dev/) - テストフレームワーク
-- **Storybook** (@https://storybook.js.org/) - UIコンポーネント開発
-- **Playwright** (@https://playwright.dev/) - E2Eテスト
-- **TypeScript** (@https://www.typescriptlang.org/) - 型安全な開発
-- **Supabase** (@https://supabase.com/) - BaaS（DB・Auth・Storage統合）
-- **Supabase CLI** (@https://supabase.com/docs/guides/cli) - ローカル開発環境
+- [Vitest](https://vitest.dev/) - テストフレームワーク
+- [Storybook](https://storybook.js.org/) - UIコンポーネント開発
+- [Playwright](https://playwright.dev/) - E2Eテスト
+- [TypeScript](https://www.typescriptlang.org/) - 型安全な開発
+- [Supabase](https://supabase.com/) - BaaS（DB・Auth・Storage統合）
+- [Supabase CLI](https://supabase.com/docs/guides/cli) - ローカル開発環境
 
 ---
 
