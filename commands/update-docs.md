@@ -5,10 +5,10 @@
 
 機能実装に合わせた包括的なドキュメント更新と整合性確保を実行します。
 
-~/.claude/workflow/development-flow.md のドキュメント自動更新ルールに従って、以下を同期更新してください：
+workflow/development-flow.md のドキュメント自動更新ルールに従って、以下を同期更新してください：
 
-- ~/.claude/requirements/document-structure.md（ドキュメント構造）
-- ~/.claude/templates/automation-setup.md（自動生成ツール）
+- requirements/document-structure.md（ドキュメント構造）
+- templates/automation-setup.md（自動生成ツール）
 
 更新対象：
 1. README.md（機能一覧更新）

@@ -7,9 +7,9 @@
 
 以下のガイドラインに従って、指定された技術・ツール・フレームワークの包括的な調査を実行してください：
 
-- ~/.claude/workflow/research-process.md（調査プロセス）
-- ~/.claude/workflow/analysis-methods.md（分析手法）
-- ~/.claude/templates/research-template.md（調査結果レポート形式）
+- workflow/research-process.md（調査プロセス）
+- workflow/analysis-methods.md（分析手法）
+- templates/research-template.md（調査結果レポート形式）
 
 ## 技術調査手順
 

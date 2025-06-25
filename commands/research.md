@@ -7,9 +7,9 @@
 
 以下のガイドラインに従って、指定された調査を体系的に実行してください：
 
-- ~/.claude/workflow/research-process.md（調査プロセス）
-- ~/.claude/workflow/analysis-methods.md（分析手法・ツール選択）
-- ~/.claude/templates/research-template.md（調査結果レポート形式）
+- workflow/research-process.md（調査プロセス）
+- workflow/analysis-methods.md（分析手法・ツール選択）
+- templates/research-template.md（調査結果レポート形式）
 
 ## 調査実行手順
 

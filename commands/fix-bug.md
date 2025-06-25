@@ -7,10 +7,10 @@
 
 以下のガイドラインに従って、バグ修正を完全自動化してください：
 
-- ~/.claude/workflow/git-workflow.md（hotfixブランチ戦略）
-- ~/.claude/workflow/tdd-process.md（バグ再現テスト → 修正実装）
-- ~/.claude/templates/commit-message.md（fix: コミット形式）
-- ~/.claude/templates/pr-template.md（バグ修正PRテンプレート）
+- workflow/git-workflow.md（hotfixブランチ戦略）
+- workflow/tdd-process.md（バグ再現テスト → 修正実装）
+- templates/commit-message.md（fix: コミット形式）
+- templates/pr-template.md（バグ修正PRテンプレート）
 
 手順：
 1. 原因分析と影響範囲特定
