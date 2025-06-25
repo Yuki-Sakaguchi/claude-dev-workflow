@@ -5,7 +5,7 @@ Pull Requestの包括的な品質レビューを実行します（例: "#42", "f
 
 コード品質から設計・セキュリティまで、多角的なPRレビューと改善提案を実行します。
 
-workflow/review-process.md に完全に従って、Pull Requestの包括的な品質レビューを実行してください。
+@workflow/review-process.md に完全に従って、Pull Requestの包括的な品質レビューを実行してください。
 
 レビュー手順：
 1. PR/ブランチ情報の収集と機能重要度の判定

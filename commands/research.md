@@ -7,9 +7,9 @@
 
 以下のガイドラインに従って、指定された調査を体系的に実行してください：
 
-- workflow/research-process.md（調査プロセス）
-- workflow/analysis-methods.md（分析手法・ツール選択）
-- templates/research-template.md（調査結果レポート形式）
+- @workflow/research-process.md（調査プロセス）
+- @workflow/analysis-methods.md（分析手法・ツール選択）
+- @templates/research-template.md（調査結果レポート形式）
 
 ## 調査実行手順
 
@@ -55,7 +55,7 @@
 
 ## 出力形式
 
-**必ず templates/research-output-template.md の構造に完全に従って結果を出力してください**
+**必ず @templates/research-output-template.md の構造に完全に従って結果を出力してください**
 
 調査結果は以下の構成で出力：
 
