@@ -7,8 +7,8 @@
 
 以下の手順で新規プロジェクトを立ち上げてください：
 
-1. templates/preparation-sheet.md で事前情報収集
-2. requirements/interview-template.md でヒアリング実行
-3. requirements/document-structure.md でドキュメント作成
+1. @templates/preparation-sheet.md で事前情報収集
+2. @requirements/interview-template.md でヒアリング実行
+3. @requirements/document-structure.md でドキュメント作成
 
 プロジェクト概要: {user_input}
