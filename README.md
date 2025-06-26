@@ -56,7 +56,23 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 利用可能なコマンド: /start-project, /implement, /auto-review など
 ```
 
-その他のアップデートコマンドは [scripts - README.md](scripts/README.md)
+### スクリプト管理
+詳細なスクリプト使用方法とトラブルシューティングガイド: [scripts/README.md](scripts/README.md)
+
+#### クイック管理コマンド
+```bash
+# 更新チェック・実行
+curl -s https://raw.githubusercontent.com/Yuki-Sakaguchi/claude-dev-workflow/main/scripts/update.sh | bash
+
+# バックアップ作成
+~/.claude/scripts/backup.sh backup
+
+# バックアップ一覧
+~/.claude/scripts/backup.sh list
+
+# 設定復元
+~/.claude/scripts/backup.sh restore 1
+```
 
 ## 🚀 使い方
 
@@ -154,15 +170,49 @@ Claude Codeに以下を指示してガイドラインを読み込ませてくだ
 ./scripts/test-config-protection.sh
 ```
 
+## 📚 ドキュメント・ガイド
+
+### 主要ドキュメント
+- [スクリプト使用方法とトラブルシューティング](scripts/README.md) - スクリプトの詳細な使用方法、FAQ、トラブル対応
+- [基本的な使用例](scripts/examples/basic-usage.md) - 日常的な使用パターンとコマンド例
+- [高度な使用例](scripts/examples/advanced-usage.md) - 企業環境、CI/CD統合、カスタマイズ例
+
+### 開発フローガイド
+- [commands/README.md](commands/README.md) - 利用可能なスラッシュコマンド一覧
+- [workflow/](workflow/) - 開発ワークフロー詳細
+- [templates/](templates/) - 各種テンプレート集
+
 ## ⚠️ トラブルシューティング
 
-### Claude Codeが期待通りに動作しない
+### よくある問題
+詳細な解決方法は [scripts/README.md - トラブルシューティング](scripts/README.md#-トラブルシューティング) を参照
+
+#### Claude Codeが期待通りに動作しない
 1. `/clear` を実行し、メモリをクリアにする
-2. 該当するガイドラインファイルを明示的に指定
+2. 該当するガイドラインファイルを明示的に指定  
 3. 段階的に指示を分割して実行
 4. 具体的な成果物を明示
 
-### ファイルが見つからないエラー
-1. `~/.claude/` にファイルが正しく配置されているか確認
-2. ファイルパスに誤字がないか確認
-3. 必要に応じて絶対パスで指定
+#### スクリプト実行エラー
+```bash
+# 権限確認・修正
+chmod +x ~/.claude/scripts/*.sh
+
+# 健全性チェック
+~/.claude/scripts/check-compatibility.sh --check
+
+# ヘルプ表示
+~/.claude/scripts/backup.sh help
+```
+
+#### 設定が消えた・おかしくなった
+```bash
+# バックアップ確認
+~/.claude/scripts/backup.sh list
+
+# 最新のバックアップから復元
+~/.claude/scripts/backup.sh restore 1
+
+# または更新前の状態にロールバック
+~/.claude/scripts/update.sh --rollback
+```
