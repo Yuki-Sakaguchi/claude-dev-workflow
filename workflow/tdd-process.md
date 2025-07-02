@@ -1,8 +1,10 @@
-# TDD・テスト戦略（Claude Code自動実行用）
+# TDD・テスト戦略
 
 ## 基本方針
 
-**個人開発に最適化した3層テスト戦略**
+- YOU MUST: **テストは必ず実装してください**
+
+## 個人開発に最適化した3層テスト戦略
 
 1. **単体テスト（TDD）**: 全機能で必須実行
 2. **統合テスト**: API・DB連携部分のみ
@@ -10,15 +12,13 @@
 
 ## TDDサイクル（自動実行）
 
-### Red → Green → Refactor + 上位テスト
+### Red → Green → Refactor
 
 **Claude Codeの実行順序：**
 
 1. **Red**: 失敗する単体テストを作成
 2. **Green**: 最小限の実装でテスト通過
 3. **Refactor**: コード品質向上（テスト結果は変更しない）
-4. **Integration**: 必要に応じて統合テスト追加
-5. **E2E**: 主要機能の場合はE2Eテスト追加
 
 ### 各段階のコミット例
 
@@ -31,12 +31,6 @@ git commit -m "feat: implement basic user login"
 
 # Refactor: リファクタリング
 git commit -m "refactor: extract validation logic"
-
-# Integration: 統合テスト
-git commit -m "test: add login API integration test"
-
-# E2E: E2Eテスト
-git commit -m "test: add user login flow e2e test"
 ```
 
 ## テスト種別と実行基準
@@ -158,45 +152,3 @@ git commit -m "test: add user login flow e2e test"
 - **コンポーネントテスト**: Storybook（UIコンポーネント）
 - **統合テスト**: Vitest + Testing Library（フロントエンド）/ Supertest（API）
 - **E2Eテスト**: Playwright
-
-### CI/CD自動実行
-```yaml
-# PR作成時の自動テスト実行順序
-1. 単体テスト（Vitest）必須
-2. コンポーネントテスト（Storybook build）必須
-3. 統合テスト（該当機能のみ）
-4. E2Eテスト（Playwright - Critical機能のみ）
-
-# 全テスト通過でのみマージ許可
-```
-
-## Claude Codeへの期待動作
-
-### 理想的な実行例
-
-**ユーザー**: "issue #15 の決済処理機能を実装して"
-
-**Claude Code自動判断**: "Critical機能のため全テスト実装"
-
-**自動実行内容**:
-1. 決済処理の単体テスト作成（Vitest + TDD）
-2. 決済フォームコンポーネント作成（Testing Library + Storybook）
-3. 決済API統合テスト作成
-4. 決済フローE2Eテスト作成（Playwright）
-5. 全テスト通過確認
-6. PR作成
-
-## 品質チェックポイント
-
-### PR作成前の自動確認項目
-- [ ] 全単体テスト通過（Vitest）
-- [ ] カバレッジ80%以上
-- [ ] Storybookビルド成功
-- [ ] 統合テスト通過（該当する場合）
-- [ ] E2Eテスト通過（Playwright - Critical機能の場合）
-- [ ] リンター・フォーマッターチェック
-
-### 継続的品質改善
-- 週次でテストカバレッジレポート確認
-- 失敗頻度の高いテストの見直し
-- E2Eテストの実行時間最適化
