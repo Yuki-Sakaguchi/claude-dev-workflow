@@ -1,90 +1,24 @@
-# Git ワークフロー（Claude Code自動実行用）
+# Git ワークフロー
 
 ## 基本原則
 
-**Claude Codeは以下を自動実行する：**
+- Issue（もしくはIssueがない場合にも一つの作業）単位でブランチを切って作業をすること  
+- コミットは細かく行い、適切なコミットメッセージを残すこと
+- 
 
-1. issue番号を確認してブランチ作成
+## フロー
+1. Issue がある場合は番号を確認してブランチ作成（Issueがない場合にも適切に命名をして作成すること）
 2. アクセプタンス基準の確認
-3. TDDサイクルでの実装
-4. 適切なコミットメッセージでの細かいコミット
-5. PR作成
+3. TDD (@~/.claude/workflow/tdd-process.md) のサイクルでの実装
+5. PR作成 (@~/.claude/templates/pr-template.md) し、作業完了報告をして完了
 
-## 自動実行フロー
+## ブランチのルール
 
-### 新機能実装指示を受けた時
+- ベースブランチは `develop`（ない場合は `main`）
+- ブランチ名は `feature/issue-{issue番号}-{機能名を英語で簡潔に}`
 
-**ユーザー指示例：** "issue #12 のユーザーログイン機能を実装してください"
 
-**Claude Code自動実行手順：**
-
-1. GitHub issue #12 の内容とアクセプタンス基準を確認
-2. develop から feature/issue-12-user-login ブランチを作成
-3. docs/03_アクセプタンス基準.md の該当部分を確認
-4. TDDサイクル開始：
-   - テスト作成 → コミット
-   - 最小実装 → コミット  
-   - リファクタリング → コミット
-5. 実装完了後、PR作成
-
-## ブランチ命名規則（自動適用）
-
-**パターン：** `feature/issue-{issue番号}-{機能名を英語で簡潔に}`
-
-**例：**
-- issue #12 "ユーザーログイン機能" → `feature/issue-12-user-login`
-- issue #25 "決済システム連携" → `feature/issue-25-payment-integration`
-- issue #8 "API認証機能" → `feature/issue-8-api-auth`
-
-## TDDサイクル（自動実行）
-
-### Red → Green → Refactor を各ステップでコミット
-
-**テスト作成時：**
-```
-git commit -m "test: add user login validation test"
-```
-
-**最小実装時：**
-```
-git commit -m "feat: implement basic user login"
-```
-
-**リファクタリング時：**
-```
-git commit -m "refactor: extract login validation logic"
-```
-
-## PR作成（自動実行）
-
-### PRタイトル形式
-```
-feat: {機能概要} (close #{issue番号})
-```
-
-### PR説明テンプレート（自動記入）
-
-```
-## 概要
-issue #{番号} の対応
-
-## 変更内容
-- [ ] テスト実装
-- [ ] 機能実装
-- [ ] ドキュメント更新
-
-## アクセプタンス基準
-- [ ] {基準1}
-- [ ] {基準2}
-
-## テスト結果
-- [ ] 全テスト通過
-- [ ] 新規テスト追加
-```
-
-## Claude Codeへの期待動作
-
-### 理想的な会話例
+## 理想的な会話例
 
 **ユーザー：** "issue #8 のAPI認証機能を実装して"
 
@@ -99,7 +33,7 @@ issue #{番号} の対応
 
 実装を開始しますね。"
 
-*（その後、自動的に上記フローを実行）*
+**その後、自動的に上記フローを実行**
 
 ## 重要な自動判断ポイント
 
