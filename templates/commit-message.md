@@ -296,34 +296,6 @@ test: add comprehensive login test cases
 docs: update authentication documentation
 ```
 
-## CHANGELOG自動生成
-
-### Conventional Commits → CHANGELOG変換
-
-**生成される形式**:
-```markdown
-## [1.2.0] - 2025-06-21
-
-### Features
-- add user registration with email validation
-- implement JWT token refresh (auth)
-- integrate Stripe payment gateway (payment)
-
-### Bug Fixes
-- resolve null pointer in authentication
-- handle malformed request payload (api)
-- correct responsive layout on mobile
-
-### Documentation
-- update API documentation for auth endpoints
-- add troubleshooting guide to README
-```
-
-### 自動生成設定
-```bash
-# package.json scripts (automation-setup.mdで設定済み)
-"changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
-```
 
 ## Claude Code実行例
 
@@ -347,14 +319,6 @@ docs: update authentication documentation
 # 最後にPR作成
 ```
 
-### コミットメッセージ自動生成
-```bash
-# Claude Codeが自動判断して生成
-analyzeChanges() → determineType() → generateMessage()
-
-# 結果例
-"feat(auth): implement user login with JWT token"
-```
 
 ## 品質チェック
 
@@ -364,11 +328,6 @@ analyzeChanges() → determineType() → generateMessage()
 - [ ] 変更内容とメッセージが一致している
 - [ ] Conventional Commits形式に準拠
 - [ ] Issue番号が必要な場合は含まれている
-
-### 継続的改善
-- **週次**: コミット粒度・メッセージ品質の確認
-- **月次**: 自動生成ルールの精度向上
-- **リリース時**: CHANGELOG生成結果の確認
 
 ## 参考資料
 - [Conventional Commits](https://www.conventionalcommits.org/)
