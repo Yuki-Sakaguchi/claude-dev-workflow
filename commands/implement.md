@@ -5,6 +5,10 @@
 
 YOU MUST: **以下の指定された全ワークフローファイルを読み込んでから作業をしてください**
 YOU MUST: **TODOリストを作成して進めてください。TODOリストの最初にはブランチの作成、最後にはPRの作成を確実に入れてください**
+YOU MUST: **PRタイトルは必ず次の形式にしてください** - `{type}: {簡潔な変更概要} (#{issue番号})`
+YOU MUST: **PR説明文の最初に必ず以下を記載してください** - `Closes #{issue番号}`
+
+**重要**: この記載により、PRマージ時にIssueが自動的にクローズされます。
 
 - @~/.claude/workflow/development-flow.md（開発フロー）
 - @~/.claude/workflow/git-workflow.md（ブランチ戦略）
